@@ -1,31 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}StudExEl{% endblock %}</title>
+    <title>
+        {% block title %}StudExEl{% endblock %}
+    </title>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" 
+        rel="stylesheet">
 
     <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link 
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" 
+        rel="stylesheet">
 
     <!-- StudExEl CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link 
+        rel="stylesheet" 
+        href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 
+
 <body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+    <div class="container">
+
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="/">
+            StudExEl
+        </a>
+
+
+        <!-- Mobile Menu Button -->
+        <button 
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <!-- Menu -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+
+            <!-- Left Menu -->
+            <ul class="navbar-nav me-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">
+                        Home
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Marketplace
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Schools
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        About
+                    </a>
+                </li>
+
+            </ul>
+
+
+            <!-- Right Buttons -->
+            <div class="d-flex gap-2">
+
+                <a href="#" class="btn btn-outline-light">
+                    Login
+                </a>
+
+
+                <a href="#" class="btn btn-outline-light">
+                    Register
+                </a>
+
+
+                <a href="#" class="btn btn-warning fw-bold">
+                    Sell Item
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- Main Page Content -->
+<main>
 
     {% block content %}
     {% endblock %}
 
+</main>
 
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- Bootstrap JS -->
+<script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+</script>
+
 
 </body>
+
 </html>
