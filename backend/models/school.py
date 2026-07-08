@@ -1,3 +1,10 @@
+"""
+School model.
+
+Stores all educational institutions supported by StudExEl.
+Every registered user belongs to one school.
+"""
+
 from extensions import db
 
 
@@ -26,4 +33,13 @@ class School(db.Model):
 
     longitude = db.Column(db.Float)
 
-    is_active = db.Column(db.Boolean, default=True)
+    is_active = db.Column(
+        db.Boolean,
+        default=True
+    )
+
+    users = db.relationship(
+        "User",
+        backref="school",
+        lazy=True
+    )
