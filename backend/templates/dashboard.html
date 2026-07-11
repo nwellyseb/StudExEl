@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | StudExEl
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card shadow p-5">
+
+        <h2 class="mb-3">
+            Welcome, {{ user.first_name }}!
+        </h2>
+
+        <p class="lead">
+            Manage your StudExEl account and marketplace activity here.
+        </p>
+
+        <hr>
+
+        <h4 class="mb-3">
+            Account Information
+        </h4>
+
+        <p>
+            <strong>Name:</strong>
+            {{ user.full_name }}
+        </p>
+
+        <p>
+            <strong>Username:</strong>
+            {{ user.username }}
+        </p>
+
+        <p>
+            <strong>Email:</strong>
+            {{ user.email }}
+        </p>
+
+        <p>
+            <strong>School:</strong>
+
+            {% if user.school %}
+                {{ user.school.school_name }}
+            {% else %}
+                Not provided
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>Verification Status:</strong>
+            {{ user.verification_status }}
+        </p>
+
+        <hr>
+
+        <h4 class="mb-3">
+            Profile
+        </h4>
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+
+            <a
+                href="{{ url_for('profile.view_profile') }}"
+                class="btn btn-outline-primary">
+
+                View Profile
+
+            </a>
+
+            <a
+                href="{{ url_for('profile.edit_profile') }}"
+                class="btn btn-outline-secondary">
+
+                Edit Profile
+
+            </a>
+
+        </div>
+
+        <hr>
+
+        <h4 class="mb-3">
+            Marketplace
+        </h4>
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+
+            <a
+                href="{{ url_for('marketplace.marketplace_home') }}"
+                class="btn btn-primary">
+
+                Browse Marketplace
+
+            </a>
+
+            <a
+                href="{{ url_for('listings.sell') }}"
+                class="btn btn-warning">
+
+                Sell an Item
+
+            </a>
+
+            <a
+                href="{{ url_for('listings.my_listings') }}"
+                class="btn btn-success">
+
+                My Listings
+
+            </a>
+
+        </div>
+
+        <hr>
+
+        <a
+            href="{{ url_for('auth.logout') }}"
+            class="btn btn-danger">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

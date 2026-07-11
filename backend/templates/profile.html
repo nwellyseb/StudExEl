@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile | StudExEl
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow">
+
+                <div class="card-body p-5">
+
+                    <div
+                        class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+                        <div>
+
+                            <h2 class="fw-bold mb-1">
+                                {{ user.first_name }}
+                                {{ user.last_name }}
+                            </h2>
+
+                            <p class="text-muted mb-0">
+                                @{{ user.username }}
+                            </p>
+
+                        </div>
+
+                        <a
+                            href="{{ url_for('profile.edit_profile') }}"
+                            class="btn btn-primary mt-3 mt-md-0">
+
+                            Edit Profile
+
+                        </a>
+
+                    </div>
+
+                    <hr>
+
+                    <h4 class="mb-3">
+                        Account Information
+                    </h4>
+
+                    <p>
+                        <strong>Email:</strong>
+                        {{ user.email }}
+                    </p>
+
+                    <p>
+                        <strong>School:</strong>
+
+                        {% if user.school %}
+                            {{ user.school.school_name }}
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <strong>Verification Status:</strong>
+
+                        {% if user.verification_status %}
+                            {{ user.verification_status }}
+                        {% else %}
+                            Not verified
+                        {% endif %}
+                    </p>
+
+                    <hr>
+
+                    <h4 class="mb-3">
+                        Student Information
+                    </h4>
+
+                    <p>
+                        <strong>Course:</strong>
+
+                        {% if user.course %}
+                            {{ user.course }}
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <strong>Year Level:</strong>
+
+                        {% if user.year_level %}
+                            {{ user.year_level }}
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </p>
+
+                    <hr>
+
+                    <h4 class="mb-3">
+                        About
+                    </h4>
+
+                    {% if user.bio %}
+
+                        <p class="text-muted">
+                            {{ user.bio }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="text-muted">
+                            No bio has been added yet.
+                        </p>
+
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <a
+                            href="{{ url_for('profile.dashboard') }}"
+                            class="btn btn-outline-primary">
+
+                            Back to Dashboard
+
+                        </a>
+
+                        <a
+                            href="{{ url_for('listings.my_listings') }}"
+                            class="btn btn-outline-success">
+
+                            My Listings
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

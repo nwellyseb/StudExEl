@@ -7,6 +7,11 @@ Each user belongs to one school.
 
 from datetime import datetime
 
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash,
+)
+
 from extensions import db
 
 
@@ -15,9 +20,15 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    first_name = db.Column(db.String(100), nullable=False)
+    first_name = db.Column(
+        db.String(100),
+        nullable=False
+    )
 
-    last_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(
+        db.String(100),
+        nullable=False
+    )
 
     username = db.Column(
         db.String(50),
@@ -28,7 +39,7 @@ class User(db.Model):
     email = db.Column(
         db.String(150),
         unique=True,
-        nullable=True
+        nullable=False
     )
 
     password_hash = db.Column(
@@ -36,9 +47,21 @@ class User(db.Model):
         nullable=False
     )
 
-    profile_photo = db.Column(db.String(255))
+    profile_photo = db.Column(
+        db.String(255)
+    )
 
-    bio = db.Column(db.Text)
+    bio = db.Column(
+        db.Text
+    )
+
+    course = db.Column(
+        db.String(100)
+    )
+
+    year_level = db.Column(
+        db.String(30)
+    )
 
     verification_status = db.Column(
         db.String(20),
@@ -71,3 +94,31 @@ class User(db.Model):
         db.ForeignKey("schools.id"),
         nullable=False
     )
+
+    school = db.relationship(
+        "School",
+        back_populates="users"
+    )
+
+    items = db.relationship(
+        "Item",
+        back_populates="seller",
+        cascade="all, delete-orphan",
+        lazy=True
+    )
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(
+            password,
+            method="pbkdf2:sha256"
+        )
+
+    def check_password(self, password):
+        return check_password_hash(
+            self.password_hash,
+            password
+        )
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"

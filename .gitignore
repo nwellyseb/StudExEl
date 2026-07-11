@@ -23,3 +23,9 @@ instance/
 
 # Logs
 *.log
+# Local backup files
+backend/backups/
+
+# Uploaded marketplace images
+backend/static/uploads/items/*
+!backend/static/uploads/items/.gitkeep
