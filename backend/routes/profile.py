@@ -1,10 +1,10 @@
 from flask import (
     Blueprint,
-    render_template,
-    redirect,
-    url_for,
     flash,
+    redirect,
+    render_template,
     session,
+    url_for,
 )
 
 from extensions import db
@@ -17,7 +17,7 @@ from utils.decorators import login_required
 
 profile = Blueprint(
     "profile",
-    __name__
+    __name__,
 )
 
 
@@ -25,13 +25,14 @@ profile = Blueprint(
 @login_required
 def dashboard():
 
-    user = User.query.get_or_404(
-        session["user_id"]
+    user = db.get_or_404(
+        User,
+        session["user_id"],
     )
 
     return render_template(
         "dashboard.html",
-        user=user
+        user=user,
     )
 
 
@@ -39,29 +40,31 @@ def dashboard():
 @login_required
 def view_profile():
 
-    user = User.query.get_or_404(
-        session["user_id"]
+    user = db.get_or_404(
+        User,
+        session["user_id"],
     )
 
     return render_template(
         "profile.html",
-        user=user
+        user=user,
     )
 
 
 @profile.route(
     "/profile/edit",
-    methods=["GET", "POST"]
+    methods=["GET", "POST"],
 )
 @login_required
 def edit_profile():
 
-    user = User.query.get_or_404(
-        session["user_id"]
+    user = db.get_or_404(
+        User,
+        session["user_id"],
     )
 
     form = EditProfileForm(
-        obj=user
+        obj=user,
     )
 
     if form.validate_on_submit():
@@ -74,7 +77,7 @@ def edit_profile():
 
         flash(
             "Profile updated successfully!",
-            "success"
+            "success",
         )
 
         return redirect(
@@ -83,5 +86,5 @@ def edit_profile():
 
     return render_template(
         "edit_profile.html",
-        form=form
+        form=form,
     )

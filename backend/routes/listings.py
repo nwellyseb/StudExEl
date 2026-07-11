@@ -25,13 +25,13 @@ from utils.uploads import (
 
 listings = Blueprint(
     "listings",
-    __name__
+    __name__,
 )
 
 
 @listings.route(
     "/sell",
-    methods=["GET", "POST"]
+    methods=["GET", "POST"],
 )
 @login_required
 def sell():
@@ -45,15 +45,16 @@ def sell():
     form.category.choices = [
         (
             category.id,
-            category.category_name
+            category.category_name,
         )
         for category in categories
     ]
 
     if form.validate_on_submit():
 
-        user = User.query.get_or_404(
-            session["user_id"]
+        user = db.get_or_404(
+            User,
+            session["user_id"],
         )
 
         image_filename = save_item_image(
@@ -76,7 +77,7 @@ def sell():
 
         flash(
             "Your item has been listed!",
-            "success"
+            "success",
         )
 
         return redirect(
@@ -87,7 +88,7 @@ def sell():
 
     return render_template(
         "sell.html",
-        form=form
+        form=form,
     )
 
 
@@ -103,26 +104,27 @@ def my_listings():
 
     return render_template(
         "my_listings.html",
-        listings=listings_data
+        listings=listings_data,
     )
 
 
 @listings.route(
     "/edit/<int:item_id>",
-    methods=["GET", "POST"]
+    methods=["GET", "POST"],
 )
 @login_required
 def edit_item(item_id):
 
-    item = Item.query.get_or_404(
-        item_id
+    item = db.get_or_404(
+        Item,
+        item_id,
     )
 
     if item.seller_id != session["user_id"]:
 
         flash(
             "You cannot edit this item.",
-            "danger"
+            "danger",
         )
 
         return redirect(
@@ -140,7 +142,7 @@ def edit_item(item_id):
     form.category.choices = [
         (
             category.id,
-            category.category_name
+            category.category_name,
         )
         for category in categories
     ]
@@ -177,46 +179,52 @@ def edit_item(item_id):
         db.session.commit()
 
         if old_image_filename:
+
             delete_item_image(
                 old_image_filename
             )
 
         flash(
             "Listing updated successfully!",
-            "success"
+            "success",
         )
 
         return redirect(
-            url_for("listings.my_listings")
+            url_for(
+                "listings.my_listings"
+            )
         )
 
     return render_template(
         "edit_item.html",
         form=form,
-        item=item
+        item=item,
     )
 
 
 @listings.route(
     "/delete/<int:item_id>",
-    methods=["POST"]
+    methods=["POST"],
 )
 @login_required
 def delete_item(item_id):
 
-    item = Item.query.get_or_404(
-        item_id
+    item = db.get_or_404(
+        Item,
+        item_id,
     )
 
     if item.seller_id != session["user_id"]:
 
         flash(
             "You cannot delete this item.",
-            "danger"
+            "danger",
         )
 
         return redirect(
-            url_for("listings.my_listings")
+            url_for(
+                "listings.my_listings"
+            )
         )
 
     image_filename = item.image
@@ -230,9 +238,11 @@ def delete_item(item_id):
 
     flash(
         "Listing deleted successfully!",
-        "success"
+        "success",
     )
 
     return redirect(
-        url_for("listings.my_listings")
+        url_for(
+            "listings.my_listings"
+        )
     )
