@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}
+Marketplace | StudExEl
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div
+        class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Marketplace
+            </h2>
+
+            <p class="text-muted mb-0">
+                Browse items listed by students.
+            </p>
+
+        </div>
+
+        {% if session.get("user_id") %}
+
+            <a
+                href="{{ url_for('listings.sell') }}"
+                class="btn btn-warning mt-3 mt-md-0">
+
+                Sell an Item
+
+            </a>
+
+        {% endif %}
+
+    </div>
+
+    <form
+        method="GET"
+        action="{{ url_for('marketplace.marketplace_home') }}"
+        class="row g-2 mb-4">
+
+        <div class="col-md-9">
+
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Search by title or description..."
+                value="{{ search }}">
+
+        </div>
+
+        <div class="col-md-3 d-grid">
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                Search
+
+            </button>
+
+        </div>
+
+    </form>
+
+    {% if search %}
+
+        <div class="mb-4">
+
+            <span class="text-muted">
+                Search results for:
+            </span>
+
+            <strong>
+                {{ search }}
+            </strong>
+
+            <a
+                href="{{ url_for('marketplace.marketplace_home') }}"
+                class="ms-2">
+
+                Clear search
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+    {% if listings %}
+
+        <div class="row g-4">
+
+            {% for item in listings %}
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        {% if item.image %}
+
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='uploads/items/' ~ item.image
+                                ) }}"
+                                class="card-img-top"
+                                alt="{{ item.title }}"
+                                style="height: 220px; object-fit: cover;">
+
+                        {% else %}
+
+                            <div
+                                class="bg-light d-flex align-items-center justify-content-center text-muted"
+                                style="height: 220px;">
+
+                                No image available
+
+                            </div>
+
+                        {% endif %}
+
+                        <div class="card-body">
+
+                            <h5 class="card-title fw-bold">
+                                {{ item.title }}
+                            </h5>
+
+                            <p class="card-text text-muted">
+                                {{ item.description | truncate(120) }}
+                            </p>
+
+                            <p class="mb-2">
+
+                                <strong>Condition:</strong>
+                                {{ item.condition }}
+
+                            </p>
+
+                            {% if item.category %}
+
+                                <p class="mb-2">
+
+                                    <strong>Category:</strong>
+                                    {{ item.category.category_name }}
+
+                                </p>
+
+                            {% endif %}
+
+                            <h5 class="text-primary">
+                                ₱{{ "%.2f" | format(item.price) }}
+                            </h5>
+
+                        </div>
+
+                        <div class="card-footer bg-white border-0 pb-3">
+
+                            <a
+                                href="{{ url_for(
+                                    'marketplace.item_details',
+                                    item_id=item.id
+                                ) }}"
+                                class="btn btn-outline-primary w-100">
+
+                                View Details
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="alert alert-info">
+
+            {% if search %}
+
+                No listings matched your search.
+
+            {% else %}
+
+                No items have been listed yet.
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

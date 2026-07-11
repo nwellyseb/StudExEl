@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Login | StudExEl{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5" style="max-width:500px;">
+
+    <div class="card shadow p-4">
+
+        <h2 class="text-center mb-4">
+            Login to StudExEl
+        </h2>
+
+        <form method="POST">
+
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
+            </div>
+
+            <div class="mb-4">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+            </div>
+
+            {{ form.submit(class="btn btn-primary w-100") }}
+
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{{ url_for('auth.register') }}">
+                Create an Account
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

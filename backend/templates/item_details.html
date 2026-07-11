@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ item.title }} | StudExEl
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow">
+
+                {% if item.image %}
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='uploads/items/' ~ item.image
+                        ) }}"
+                        class="card-img-top"
+                        alt="{{ item.title }}"
+                        style="max-height: 500px; object-fit: cover;">
+
+                {% else %}
+
+                    <div
+                        class="bg-light d-flex align-items-center justify-content-center text-muted"
+                        style="height: 350px;">
+
+                        No image available
+
+                    </div>
+
+                {% endif %}
+
+                <div class="card-body p-4">
+
+                    <h2 class="fw-bold mb-3">
+                        {{ item.title }}
+                    </h2>
+
+                    <h4 class="text-primary mb-4">
+                        ₱{{ "%.2f" | format(item.price) }}
+                    </h4>
+
+                    <div class="mb-3">
+
+                        <strong>Condition:</strong>
+
+                        <span class="badge bg-secondary">
+                            {{ item.condition }}
+                        </span>
+
+                    </div>
+
+                    {% if item.category %}
+
+                        <div class="mb-3">
+
+                            <strong>Category:</strong>
+                            {{ item.category.category_name }}
+
+                        </div>
+
+                    {% endif %}
+
+                    {% if item.school %}
+
+                        <div class="mb-3">
+
+                            <strong>School:</strong>
+                            {{ item.school.school_name }}
+
+                        </div>
+
+                    {% endif %}
+
+                    {% if item.seller %}
+
+                        <div class="mb-3">
+
+                            <strong>Seller:</strong>
+                            {{ item.seller.first_name }}
+                            {{ item.seller.last_name }}
+
+                        </div>
+
+                    {% endif %}
+
+                    <hr>
+
+                    <h5>
+                        Description
+                    </h5>
+
+                    <p class="text-muted">
+                        {{ item.description }}
+                    </p>
+
+                    <hr>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <a
+                            href="{{ url_for(
+                                'marketplace.marketplace_home'
+                            ) }}"
+                            class="btn btn-outline-primary">
+
+                            Back to Marketplace
+
+                        </a>
+
+                        {% if session.get("user_id") == item.seller_id %}
+
+                            <a
+                                href="{{ url_for(
+                                    'listings.edit_item',
+                                    item_id=item.id
+                                ) }}"
+                                class="btn btn-warning">
+
+                                Edit Listing
+
+                            </a>
+
+                            <a
+                                href="{{ url_for(
+                                    'listings.my_listings'
+                                ) }}"
+                                class="btn btn-success">
+
+                                My Listings
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
