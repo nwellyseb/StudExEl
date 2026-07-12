@@ -28,6 +28,7 @@ def test_user_can_create_listing_with_image(
             "price": "500.00",
             "condition": "Like New",
             "category": str(category.id),
+            "status": "Available",
             "image": (
                 image_data,
                 "textbook.png",
@@ -271,6 +272,7 @@ def test_replacing_image_removes_old_file(
             "price": "350.00",
             "condition": "Like New",
             "category": str(category.id),
+            "status": "Available",
             "image": (
                 replacement_image,
                 "replacement-image.png",

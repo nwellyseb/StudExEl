@@ -156,6 +156,31 @@ Edit {{ item.title }} | StudExEl
 
                         </div>
 
+                        <div class="mb-3">
+
+                            {{ form.status.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.status(
+                                class="form-select"
+                            ) }}
+
+                            <div class="form-text">
+                                Mark the listing as reserved or sold when
+                                it is no longer available to other students.
+                            </div>
+
+                            {% for error in form.status.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
                         <div class="mb-4">
 
                             {{ form.image.label(

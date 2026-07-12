@@ -10,7 +10,10 @@ from flask import (
 
 from extensions import db
 
-from forms.item_form import ItemForm
+from forms.item_form import (
+    EditItemForm,
+    ItemForm,
+)
 
 from models.category import Category
 from models.item import Item
@@ -67,6 +70,7 @@ def sell():
             price=form.price.data,
             condition=form.condition.data,
             image=image_filename,
+            status="Available",
             seller_id=user.id,
             school_id=user.school_id,
             category_id=form.category.data,
@@ -133,7 +137,7 @@ def edit_item(item_id):
             )
         )
 
-    form = ItemForm()
+    form = EditItemForm()
 
     categories = Category.query.order_by(
         Category.category_name
@@ -154,6 +158,7 @@ def edit_item(item_id):
         form.price.data = item.price
         form.condition.data = item.condition
         form.category.data = item.category_id
+        form.status.data = item.status
 
     if form.validate_on_submit():
 
@@ -162,6 +167,7 @@ def edit_item(item_id):
         item.price = form.price.data
         item.condition = form.condition.data
         item.category_id = form.category.data
+        item.status = form.status.data
 
         old_image_filename = None
 
