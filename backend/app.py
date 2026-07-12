@@ -2,19 +2,19 @@ from flask import Flask, render_template
 from flask_migrate import Migrate
 
 from config import Config
-from extensions import db
+from extensions import csrf, db
 
 from routes.auth import auth
-from routes.marketplace import marketplace
 from routes.listings import listings
+from routes.marketplace import marketplace
 from routes.profile import profile
 
 # Import models so Flask-Migrate can detect them.
 from models import (
-    School,
     Category,
-    User,
     Item,
+    School,
+    User,
 )
 
 
@@ -23,7 +23,12 @@ app.config.from_object(Config)
 
 # Initialize extensions.
 db.init_app(app)
-migrate = Migrate(app, db)
+csrf.init_app(app)
+
+migrate = Migrate(
+    app,
+    db,
+)
 
 # Register blueprints.
 app.register_blueprint(auth)
@@ -34,8 +39,30 @@ app.register_blueprint(profile)
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+
+    return render_template(
+        "home.html"
+    )
+
+
+@app.errorhandler(400)
+def bad_request(error):
+
+    return render_template(
+        "errors/400.html"
+    ), 400
+
+
+@app.errorhandler(413)
+def file_too_large(error):
+
+    return render_template(
+        "errors/413.html"
+    ), 413
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(
+        debug=True
+    )

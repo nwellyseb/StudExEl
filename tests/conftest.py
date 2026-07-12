@@ -14,7 +14,7 @@ sys.path.insert(
 )
 
 
-from extensions import db
+from extensions import csrf, db
 
 from models import (
     Category,
@@ -57,16 +57,29 @@ def app(tmp_path):
             f"sqlite:///{test_database}"
         ),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
+
+        # CSRF protection is initialized,
+        # but disabled during automated form submissions.
         WTF_CSRF_ENABLED=False,
+
         ITEM_IMAGE_UPLOAD_FOLDER=str(
             test_upload_folder
         ),
+
         MAX_CONTENT_LENGTH=(
             5 * 1024 * 1024
         ),
+
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE="Lax",
+        SESSION_COOKIE_SECURE=False,
     )
 
     db.init_app(
+        test_app
+    )
+
+    csrf.init_app(
         test_app
     )
 
@@ -143,7 +156,9 @@ def category(app):
     test_category = Category(
         category_name="Textbooks",
         slug="textbooks",
-        description="Books and academic materials.",
+        description=(
+            "Books and academic materials."
+        ),
         display_order=1,
         is_active=True,
     )
@@ -199,6 +214,8 @@ def logged_in_client(
     assert response.status_code == 200
 
     return client
+
+
 @pytest.fixture
 def second_user(app, school):
 
