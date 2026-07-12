@@ -19,6 +19,13 @@ from wtforms.validators import (
 )
 
 
+LISTING_STATUS_CHOICES = [
+    ("Available", "Available"),
+    ("Reserved", "Reserved"),
+    ("Sold", "Sold"),
+]
+
+
 class ItemForm(FlaskForm):
 
     title = StringField(
@@ -26,7 +33,7 @@ class ItemForm(FlaskForm):
         validators=[
             DataRequired(),
             Length(max=150),
-        ]
+        ],
     )
 
     description = TextAreaField(
@@ -34,7 +41,7 @@ class ItemForm(FlaskForm):
         validators=[
             DataRequired(),
             Length(min=10, max=1000),
-        ]
+        ],
     )
 
     price = DecimalField(
@@ -43,7 +50,7 @@ class ItemForm(FlaskForm):
         validators=[
             DataRequired(),
             NumberRange(min=0),
-        ]
+        ],
     )
 
     condition = SelectField(
@@ -57,7 +64,7 @@ class ItemForm(FlaskForm):
         ],
         validators=[
             DataRequired(),
-        ]
+        ],
     )
 
     category = SelectField(
@@ -65,7 +72,7 @@ class ItemForm(FlaskForm):
         coerce=int,
         validators=[
             DataRequired(),
-        ]
+        ],
     )
 
     image = FileField(
@@ -75,9 +82,20 @@ class ItemForm(FlaskForm):
                 ["jpg", "jpeg", "png", "webp"],
                 "Only JPG, JPEG, PNG, and WEBP images are allowed.",
             ),
-        ]
+        ],
     )
 
     submit = SubmitField(
         "Publish Listing"
+    )
+
+
+class EditItemForm(ItemForm):
+
+    status = SelectField(
+        "Listing Status",
+        choices=LISTING_STATUS_CHOICES,
+        validators=[
+            DataRequired(),
+        ],
     )

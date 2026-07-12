@@ -103,6 +103,7 @@ def test_owner_can_edit_listing(
             "price": "550.00",
             "condition": "Like New",
             "category": str(category.id),
+            "status": "Available",
         },
         follow_redirects=True,
     )

@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 
+{% macro marketplace_page_url(page_number) -%}
+
+    {{ url_for(
+        'marketplace.marketplace_home',
+        page=page_number,
+        search=search or none,
+        category=selected_category,
+        condition=selected_condition or none,
+        status=selected_status or none,
+        min_price=minimum_price,
+        max_price=maximum_price,
+        sort=selected_sort
+    ) }}
+
+{%- endmacro %}
+
 {% block title %}
 Marketplace | StudExEl
 {% endblock %}
@@ -37,59 +53,301 @@ Marketplace | StudExEl
 
     </div>
 
-    <form
-        method="GET"
-        action="{{ url_for('marketplace.marketplace_home') }}"
-        class="row g-2 mb-4">
+    <div class="card shadow-sm mb-4">
 
-        <div class="col-md-9">
+        <div class="card-body">
 
-            <input
-                type="text"
-                name="search"
-                class="form-control"
-                placeholder="Search by title or description..."
-                value="{{ search }}">
+            <form
+                method="GET"
+                action="{{ url_for(
+                    'marketplace.marketplace_home'
+                ) }}">
+
+                <div class="row g-3">
+
+                    <div class="col-lg-6">
+
+                        <label
+                            for="search"
+                            class="form-label">
+
+                            Search
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="search"
+                            name="search"
+                            class="form-control"
+                            placeholder="Search by title or description..."
+                            value="{{ search }}">
+
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+
+                        <label
+                            for="category"
+                            class="form-label">
+
+                            Category
+
+                        </label>
+
+                        <select
+                            id="category"
+                            name="category"
+                            class="form-select">
+
+                            <option value="">
+                                All Categories
+                            </option>
+
+                            {% for category in categories %}
+
+                                <option
+                                    value="{{ category.id }}"
+                                    {% if selected_category == category.id %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ category.category_name }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+
+                        <label
+                            for="condition"
+                            class="form-label">
+
+                            Condition
+
+                        </label>
+
+                        <select
+                            id="condition"
+                            name="condition"
+                            class="form-select">
+
+                            <option value="">
+                                All Conditions
+                            </option>
+
+                            {% for condition in conditions %}
+
+                                <option
+                                    value="{{ condition }}"
+                                    {% if selected_condition == condition %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ condition }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+
+                        <label
+                            for="status"
+                            class="form-label">
+
+                            Status
+
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                            class="form-select">
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            {% for status in statuses %}
+
+                                <option
+                                    value="{{ status }}"
+                                    {% if selected_status == status %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ status }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+
+                        <label
+                            for="min_price"
+                            class="form-label">
+
+                            Minimum Price
+
+                        </label>
+
+                        <input
+                            type="number"
+                            id="min_price"
+                            name="min_price"
+                            class="form-control"
+                            min="0"
+                            step="0.01"
+                            placeholder="₱0.00"
+                            value="{{
+                                minimum_price
+                                if minimum_price is not none
+                                else ''
+                            }}">
+
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+
+                        <label
+                            for="max_price"
+                            class="form-label">
+
+                            Maximum Price
+
+                        </label>
+
+                        <input
+                            type="number"
+                            id="max_price"
+                            name="max_price"
+                            class="form-control"
+                            min="0"
+                            step="0.01"
+                            placeholder="No maximum"
+                            value="{{
+                                maximum_price
+                                if maximum_price is not none
+                                else ''
+                            }}">
+
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+
+                        <label
+                            for="sort"
+                            class="form-label">
+
+                            Sort By
+
+                        </label>
+
+                        <select
+                            id="sort"
+                            name="sort"
+                            class="form-select">
+
+                            <option
+                                value="newest"
+                                {% if selected_sort == "newest" %}
+                                    selected
+                                {% endif %}>
+
+                                Newest First
+
+                            </option>
+
+                            <option
+                                value="oldest"
+                                {% if selected_sort == "oldest" %}
+                                    selected
+                                {% endif %}>
+
+                                Oldest First
+
+                            </option>
+
+                            <option
+                                value="price_low"
+                                {% if selected_sort == "price_low" %}
+                                    selected
+                                {% endif %}>
+
+                                Price: Low to High
+
+                            </option>
+
+                            <option
+                                value="price_high"
+                                {% if selected_sort == "price_high" %}
+                                    selected
+                                {% endif %}>
+
+                                Price: High to Low
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Apply Filters
+
+                    </button>
+
+                    <a
+                        href="{{ url_for(
+                            'marketplace.marketplace_home'
+                        ) }}"
+                        class="btn btn-outline-secondary">
+
+                        Clear Filters
+
+                    </a>
+
+                </div>
+
+            </form>
 
         </div>
 
-        <div class="col-md-3 d-grid">
+    </div>
 
-            <button
-                type="submit"
-                class="btn btn-primary">
+    <div class="mb-3 text-muted">
 
-                Search
+        {{ pagination.total }}
 
-            </button>
+        {% if pagination.total == 1 %}
+            listing found
+        {% else %}
+            listings found
+        {% endif %}
 
-        </div>
-
-    </form>
-
-    {% if search %}
-
-        <div class="mb-4">
-
-            <span class="text-muted">
-                Search results for:
-            </span>
-
-            <strong>
-                {{ search }}
-            </strong>
-
-            <a
-                href="{{ url_for('marketplace.marketplace_home') }}"
-                class="ms-2">
-
-                Clear search
-
-            </a>
-
-        </div>
-
-    {% endif %}
+    </div>
 
     {% if listings %}
 
@@ -126,9 +384,40 @@ Marketplace | StudExEl
 
                         <div class="card-body">
 
-                            <h5 class="card-title fw-bold">
-                                {{ item.title }}
-                            </h5>
+                            <div
+                                class="d-flex justify-content-between align-items-start gap-2 mb-2">
+
+                                <h5 class="card-title fw-bold mb-0">
+                                    {{ item.title }}
+                                </h5>
+
+                                {% if item.status == "Available" %}
+
+                                    <span class="badge text-bg-success">
+                                        Available
+                                    </span>
+
+                                {% elif item.status == "Reserved" %}
+
+                                    <span class="badge text-bg-warning">
+                                        Reserved
+                                    </span>
+
+                                {% elif item.status == "Sold" %}
+
+                                    <span class="badge text-bg-secondary">
+                                        Sold
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge text-bg-light">
+                                        {{ item.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
 
                             <p class="card-text text-muted">
                                 {{ item.description | truncate(120) }}
@@ -181,6 +470,107 @@ Marketplace | StudExEl
 
         </div>
 
+        {% if pagination.pages > 1 %}
+
+            <nav
+                class="mt-5"
+                aria-label="Marketplace pages">
+
+                <ul class="pagination justify-content-center flex-wrap">
+
+                    <li
+                        class="page-item
+                        {% if not pagination.has_prev %}
+                            disabled
+                        {% endif %}">
+
+                        <a
+                            class="page-link"
+                            href="{{
+                                marketplace_page_url(
+                                    pagination.prev_num
+                                )
+                                if pagination.has_prev
+                                else '#'
+                            }}">
+
+                            Previous
+
+                        </a>
+
+                    </li>
+
+                    {% for page_number in pagination.iter_pages(
+                        left_edge=1,
+                        right_edge=1,
+                        left_current=2,
+                        right_current=2
+                    ) %}
+
+                        {% if page_number %}
+
+                            <li
+                                class="page-item
+                                {% if page_number == pagination.page %}
+                                    active
+                                {% endif %}">
+
+                                <a
+                                    class="page-link"
+                                    href="{{
+                                        marketplace_page_url(
+                                            page_number
+                                        )
+                                    }}">
+
+                                    {{ page_number }}
+
+                                </a>
+
+                            </li>
+
+                        {% else %}
+
+                            <li class="page-item disabled">
+
+                                <span class="page-link">
+                                    …
+                                </span>
+
+                            </li>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    <li
+                        class="page-item
+                        {% if not pagination.has_next %}
+                            disabled
+                        {% endif %}">
+
+                        <a
+                            class="page-link"
+                            href="{{
+                                marketplace_page_url(
+                                    pagination.next_num
+                                )
+                                if pagination.has_next
+                                else '#'
+                            }}">
+
+                            Next
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        {% endif %}
+
     {% else %}
 
         <div class="alert alert-info">
@@ -188,6 +578,16 @@ Marketplace | StudExEl
             {% if search %}
 
                 No listings matched your search.
+
+            {% elif (
+                selected_category
+                or selected_condition
+                or selected_status
+                or minimum_price is not none
+                or maximum_price is not none
+            ) %}
+
+                No listings matched the selected filters.
 
             {% else %}
 

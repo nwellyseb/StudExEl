@@ -68,9 +68,40 @@ My Listings | StudExEl
 
                         <div class="card-body">
 
-                            <h5 class="card-title fw-bold">
-                                {{ item.title }}
-                            </h5>
+                            <div
+                                class="d-flex justify-content-between align-items-start gap-2 mb-2">
+
+                                <h5 class="card-title fw-bold mb-0">
+                                    {{ item.title }}
+                                </h5>
+
+                                {% if item.status == "Available" %}
+
+                                    <span class="badge text-bg-success">
+                                        Available
+                                    </span>
+
+                                {% elif item.status == "Reserved" %}
+
+                                    <span class="badge text-bg-warning">
+                                        Reserved
+                                    </span>
+
+                                {% elif item.status == "Sold" %}
+
+                                    <span class="badge text-bg-secondary">
+                                        Sold
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge text-bg-light">
+                                        {{ item.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
 
                             <p class="card-text text-muted">
                                 {{ item.description | truncate(100) }}
