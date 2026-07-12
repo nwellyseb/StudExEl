@@ -136,6 +136,11 @@ My Listings | StudExEl
                                         'Are you sure you want to delete this listing?'
                                     );">
 
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}">
+
                                     <button
                                         type="submit"
                                         class="btn btn-danger w-100">
