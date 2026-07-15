@@ -18,7 +18,9 @@ from extensions import csrf, db
 
 from models import (
     Category,
+    Conversation,
     Item,
+    Message,
     School,
     User,
 )
@@ -26,6 +28,7 @@ from models import (
 from routes.auth import auth
 from routes.listings import listings
 from routes.marketplace import marketplace
+from routes.messages import messages
 from routes.profile import profile
 
 
@@ -57,19 +60,13 @@ def app(tmp_path):
             f"sqlite:///{test_database}"
         ),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-
-        # CSRF protection is initialized,
-        # but disabled during automated form submissions.
         WTF_CSRF_ENABLED=False,
-
         ITEM_IMAGE_UPLOAD_FOLDER=str(
             test_upload_folder
         ),
-
         MAX_CONTENT_LENGTH=(
             5 * 1024 * 1024
         ),
-
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=False,
@@ -93,6 +90,10 @@ def app(tmp_path):
 
     test_app.register_blueprint(
         listings
+    )
+
+    test_app.register_blueprint(
+        messages
     )
 
     test_app.register_blueprint(
@@ -132,7 +133,9 @@ def runner(app):
 def school(app):
 
     test_school = School(
-        school_name="StudExEl Test University",
+        school_name=(
+            "StudExEl Test University"
+        ),
         short_name="STU",
         school_type="University",
         sector="Private",
@@ -206,7 +209,9 @@ def logged_in_client(
         "/login",
         data={
             "username": user.username,
-            "password": "securepassword123",
+            "password": (
+                "securepassword123"
+            ),
         },
         follow_redirects=True,
     )
@@ -217,7 +222,10 @@ def logged_in_client(
 
 
 @pytest.fixture
-def second_user(app, school):
+def second_user(
+    app,
+    school,
+):
 
     test_user = User(
         first_name="Another",
@@ -249,8 +257,12 @@ def second_logged_in_client(
     response = client.post(
         "/login",
         data={
-            "username": second_user.username,
-            "password": "anotherpassword123",
+            "username": (
+                second_user.username
+            ),
+            "password": (
+                "anotherpassword123"
+            ),
         },
         follow_redirects=True,
     )
