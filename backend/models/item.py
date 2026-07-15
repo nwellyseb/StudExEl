@@ -14,88 +14,95 @@ class Item(db.Model):
 
     id = db.Column(
         db.Integer,
-        primary_key=True
+        primary_key=True,
     )
 
     title = db.Column(
         db.String(150),
-        nullable=False
+        nullable=False,
     )
 
     description = db.Column(
         db.Text,
-        nullable=False
+        nullable=False,
     )
 
     price = db.Column(
         db.Float,
-        nullable=False
+        nullable=False,
     )
 
     condition = db.Column(
         db.String(30),
-        nullable=False
+        nullable=False,
     )
 
     image = db.Column(
-        db.String(255)
+        db.String(255),
     )
 
     status = db.Column(
         db.String(20),
-        default="Available"
+        default="Available",
     )
 
     is_featured = db.Column(
         db.Boolean,
-        default=False
+        default=False,
     )
 
     views = db.Column(
         db.Integer,
-        default=0
+        default=0,
     )
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=datetime.utcnow,
     )
 
     updated_at = db.Column(
         db.DateTime,
         default=datetime.utcnow,
-        onupdate=datetime.utcnow
+        onupdate=datetime.utcnow,
     )
 
     seller_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
-        nullable=False
+        nullable=False,
     )
 
     category_id = db.Column(
         db.Integer,
         db.ForeignKey("categories.id"),
-        nullable=False
+        nullable=False,
     )
 
     school_id = db.Column(
         db.Integer,
         db.ForeignKey("schools.id"),
-        nullable=False
+        nullable=False,
     )
 
     seller = db.relationship(
         "User",
-        back_populates="items"
+        back_populates="items",
     )
 
     category = db.relationship(
         "Category",
-        back_populates="items"
+        back_populates="items",
     )
 
     school = db.relationship(
         "School",
-        back_populates="items"
+        back_populates="items",
+    )
+
+    conversations = db.relationship(
+        "Conversation",
+        back_populates="item",
+        cascade="all, delete-orphan",
+        lazy=True,
     )

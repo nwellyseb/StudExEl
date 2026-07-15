@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}
+Conversation | StudExEl
+{% endblock %}
+
+{% block content %}
+
+{% set participant = conversation.other_participant(
+    current_user_id
+) %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-white p-4">
+
+                    <div
+                        class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+
+                        <div>
+
+                            <a
+                                href="{{ url_for(
+                                    'messages.inbox'
+                                ) }}"
+                                class="text-decoration-none">
+
+                                ← Back to Messages
+
+                            </a>
+
+                            <h3 class="fw-bold mt-3 mb-1">
+
+                                {% if participant %}
+
+                                    {{ participant.full_name }}
+
+                                {% else %}
+
+                                    Unknown User
+
+                                {% endif %}
+
+                            </h3>
+
+                            <p class="text-muted mb-0">
+
+                                Discussing:
+
+                                <a
+                                    href="{{ url_for(
+                                        'marketplace.item_details',
+                                        item_id=conversation.item.id
+                                    ) }}">
+
+                                    {{ conversation.item.title }}
+
+                                </a>
+
+                            </p>
+
+                        </div>
+
+                        <div class="text-end">
+
+                            {% if conversation.item.status == "Available" %}
+
+                                <span class="badge text-bg-success">
+                                    Available
+                                </span>
+
+                            {% elif conversation.item.status == "Reserved" %}
+
+                                <span class="badge text-bg-warning">
+                                    Reserved
+                                </span>
+
+                            {% elif conversation.item.status == "Sold" %}
+
+                                <span class="badge text-bg-secondary">
+                                    Sold
+                                </span>
+
+                            {% endif %}
+
+                            <div class="fw-bold text-primary mt-2">
+
+                                ₱{{
+                                    "%.2f"
+                                    | format(conversation.item.price)
+                                }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="card-body bg-light p-4"
+                    style="min-height: 420px;">
+
+                    {% if messages %}
+
+                        <div class="d-flex flex-column gap-3">
+
+                            {% for message in messages %}
+
+                                {% if message.sender_id == current_user_id %}
+
+                                    <div
+                                        class="d-flex justify-content-end">
+
+                                        <div
+                                            class="bg-primary text-white rounded p-3"
+                                            style="max-width: 75%;">
+
+                                            <div class="mb-1">
+                                                {{ message.body }}
+                                            </div>
+
+                                            <div
+                                                class="small text-white-50 text-end">
+
+                                                {{ message.created_at.strftime(
+                                                    "%b %d, %Y %I:%M %p"
+                                                ) }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div
+                                        class="d-flex justify-content-start">
+
+                                        <div
+                                            class="bg-white border rounded p-3"
+                                            style="max-width: 75%;">
+
+                                            <div class="fw-semibold mb-1">
+
+                                                {{ message.sender.full_name }}
+
+                                            </div>
+
+                                            <div class="mb-1">
+                                                {{ message.body }}
+                                            </div>
+
+                                            <div class="small text-muted">
+
+                                                {{ message.created_at.strftime(
+                                                    "%b %d, %Y %I:%M %p"
+                                                ) }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div
+                            class="text-center text-muted py-5">
+
+                            <h5>
+                                No messages yet
+                            </h5>
+
+                            <p>
+                                Send the first message about this listing.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="card-footer bg-white p-4">
+
+                    <form method="POST">
+
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+
+                            {{ form.body.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.body(
+                                class="form-control",
+                                rows="3",
+                                maxlength="2000",
+                                placeholder=(
+                                    "Write a message about this listing..."
+                                )
+                            ) }}
+
+                            <div class="form-text">
+                                Maximum length: 2,000 characters.
+                            </div>
+
+                            {% for error in form.body.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <div
+                            class="d-flex flex-wrap justify-content-between gap-2">
+
+                            <a
+                                href="{{ url_for(
+                                    'marketplace.item_details',
+                                    item_id=conversation.item.id
+                                ) }}"
+                                class="btn btn-outline-secondary">
+
+                                View Listing
+
+                            </a>
+
+                            {{ form.submit(
+                                class="btn btn-primary"
+                            ) }}
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

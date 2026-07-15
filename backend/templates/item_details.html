@@ -39,9 +39,34 @@
 
                 <div class="card-body p-4">
 
-                    <h2 class="fw-bold mb-3">
-                        {{ item.title }}
-                    </h2>
+                    <div
+                        class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+
+                        <h2 class="fw-bold mb-0">
+                            {{ item.title }}
+                        </h2>
+
+                        {% if item.status == "Available" %}
+
+                            <span class="badge text-bg-success fs-6">
+                                Available
+                            </span>
+
+                        {% elif item.status == "Reserved" %}
+
+                            <span class="badge text-bg-warning fs-6">
+                                Reserved
+                            </span>
+
+                        {% elif item.status == "Sold" %}
+
+                            <span class="badge text-bg-secondary fs-6">
+                                Sold
+                            </span>
+
+                        {% endif %}
+
+                    </div>
 
                     <h4 class="text-primary mb-4">
                         ₱{{ "%.2f" | format(item.price) }}
@@ -84,8 +109,7 @@
                         <div class="mb-3">
 
                             <strong>Seller:</strong>
-                            {{ item.seller.first_name }}
-                            {{ item.seller.last_name }}
+                            {{ item.seller.full_name }}
 
                         </div>
 
@@ -135,6 +159,57 @@
                                 class="btn btn-success">
 
                                 My Listings
+
+                            </a>
+
+                        {% elif session.get("user_id") %}
+
+                            {% if item.status == "Sold" %}
+
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    disabled>
+
+                                    Item Sold
+
+                                </button>
+
+                            {% else %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'messages.start_conversation',
+                                        item_id=item.id
+                                    ) }}">
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary">
+
+                                        Message Seller
+
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <a
+                                href="{{ url_for(
+                                    'auth.login'
+                                ) }}"
+                                class="btn btn-primary">
+
+                                Log In to Message Seller
 
                             </a>
 
