@@ -1,7 +1,4 @@
-python3 - <<'PY'
-from pathlib import Path
-
-content = '''{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}
 {{ item.title }} | StudExEl
@@ -253,10 +250,3 @@ content = '''{% extends "base.html" %}
 </div>
 
 {% endblock %}
-'''
-
-path = Path("backend/templates/item_details.html")
-path.write_text(content)
-
-print("item_details.html updated successfully.")
-PY
