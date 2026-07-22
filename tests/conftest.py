@@ -28,8 +28,10 @@ from models import (
 from routes.auth import auth
 from routes.listings import listings
 from routes.marketplace import marketplace
+from routes.moderation import moderation
 from routes.messages import messages
 from routes.profile import profile
+from routes.reports import reports
 
 
 @pytest.fixture
@@ -99,6 +101,8 @@ def app(tmp_path):
     test_app.register_blueprint(
         profile
     )
+    test_app.register_blueprint(reports)
+    test_app.register_blueprint(moderation)
 
     @test_app.route("/")
     def home():

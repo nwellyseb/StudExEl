@@ -133,13 +133,37 @@ class User(db.Model):
         lazy=True,
     )
 
+    submitted_reports = db.relationship(
+        "Report",
+        foreign_keys="Report.reporter_id",
+        back_populates="reporter",
+        cascade="all, delete-orphan",
+        lazy=True,
+    )
+
+    received_reports = db.relationship(
+        "Report",
+        foreign_keys="Report.reported_user_id",
+        back_populates="reported_user",
+        lazy=True,
+    )
+
+    reviewed_reports = db.relationship(
+        "Report",
+        foreign_keys="Report.reviewed_by_id",
+        back_populates="reviewed_by",
+        lazy=True,
+    )
+
     def set_password(self, password):
+
         self.password_hash = generate_password_hash(
             password,
             method="pbkdf2:sha256",
         )
 
     def check_password(self, password):
+
         return check_password_hash(
             self.password_hash,
             password,
@@ -147,6 +171,7 @@ class User(db.Model):
 
     @property
     def full_name(self):
+
         return (
             f"{self.first_name} "
             f"{self.last_name}"

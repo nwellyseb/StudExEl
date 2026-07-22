@@ -4,3 +4,4 @@ from .user import User
 from .item import Item
 from .conversation import Conversation
 from .message import Message
+from .report import Report

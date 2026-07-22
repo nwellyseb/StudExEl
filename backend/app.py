@@ -7,8 +7,10 @@ from extensions import csrf, db
 from routes.auth import auth
 from routes.listings import listings
 from routes.marketplace import marketplace
+from routes.moderation import moderation
 from routes.messages import messages
 from routes.profile import profile
+from routes.reports import reports
 
 # Import models so Flask-Migrate can detect them.
 from models import (
@@ -16,6 +18,7 @@ from models import (
     Conversation,
     Item,
     Message,
+    Report,
     School,
     User,
 )
@@ -33,12 +36,15 @@ migrate = Migrate(
     db,
 )
 
+
 # Register blueprints.
 app.register_blueprint(auth)
 app.register_blueprint(marketplace)
 app.register_blueprint(listings)
 app.register_blueprint(messages)
+app.register_blueprint(moderation)
 app.register_blueprint(profile)
+app.register_blueprint(reports)
 
 
 @app.route("/")
