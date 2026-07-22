@@ -106,3 +106,10 @@ class Item(db.Model):
         cascade="all, delete-orphan",
         lazy=True,
     )
+
+    reports = db.relationship(
+        "Report",
+        back_populates="reported_item",
+        cascade="all, delete-orphan",
+        lazy=True,
+    )

@@ -124,6 +124,17 @@ def edit_item(item_id):
         item_id,
     )
 
+    if item.status == "Removed":
+
+        flash(
+            "This listing was removed by an administrator.",
+            "danger",
+        )
+
+        return redirect(
+            url_for("listings.my_listings")
+        )
+
     if item.seller_id != session["user_id"]:
 
         flash(
@@ -219,6 +230,17 @@ def delete_item(item_id):
         Item,
         item_id,
     )
+
+    if item.status == "Removed":
+
+        flash(
+            "This listing was removed by an administrator.",
+            "danger",
+        )
+
+        return redirect(
+            url_for("listings.my_listings")
+        )
 
     if item.seller_id != session["user_id"]:
 

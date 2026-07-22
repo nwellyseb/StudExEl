@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    abort,
     render_template,
     request,
 )
@@ -85,7 +86,9 @@ def marketplace_home():
         1,
     )
 
-    query = Item.query
+    query = Item.query.filter(
+        Item.status != "Removed"
+    )
 
     if search:
 
@@ -196,6 +199,10 @@ def item_details(item_id):
         Item,
         item_id,
     )
+
+    if item.status == "Removed":
+
+        abort(404)
 
     return render_template(
         "item_details.html",

@@ -1,4 +1,7 @@
-{% extends "base.html" %}
+python3 - <<'PY'
+from pathlib import Path
+
+content = '''{% extends "base.html" %}
 
 {% block title %}
 {{ item.title }} | StudExEl
@@ -201,6 +204,28 @@
 
                             {% endif %}
 
+                            <a
+                                href="{{ url_for(
+                                    'reports.report_item',
+                                    item_id=item.id
+                                ) }}"
+                                class="btn btn-outline-warning">
+
+                                Report Listing
+
+                            </a>
+
+                            <a
+                                href="{{ url_for(
+                                    'reports.report_user',
+                                    user_id=item.seller_id
+                                ) }}"
+                                class="btn btn-outline-danger">
+
+                                Report Seller
+
+                            </a>
+
                         {% else %}
 
                             <a
@@ -228,3 +253,10 @@
 </div>
 
 {% endblock %}
+'''
+
+path = Path("backend/templates/item_details.html")
+path.write_text(content)
+
+print("item_details.html updated successfully.")
+PY

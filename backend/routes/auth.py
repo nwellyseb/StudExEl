@@ -124,6 +124,21 @@ def login():
             form.password.data
         ):
 
+            if not user.is_active:
+
+                session.clear()
+
+                flash(
+                    "Your account has been suspended. "
+                    "Please contact an administrator.",
+                    "danger",
+                )
+
+                return render_template(
+                    "login.html",
+                    form=form,
+                )
+
             session["user_id"] = user.id
 
             flash(
