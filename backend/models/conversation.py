@@ -5,7 +5,7 @@ Represents a private discussion between a buyer and seller
 about one marketplace listing.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from extensions import db
 
@@ -38,14 +38,14 @@ class Conversation(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
         nullable=False,
     )
 
     updated_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
+        onupdate=lambda: datetime.now(UTC).replace(tzinfo=None),
         nullable=False,
     )
 

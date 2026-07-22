@@ -2,8 +2,8 @@
 __pycache__/
 *.py[cod]
 
-# Virtual environment
-venv/
+# Virtual environments
+venv*/
 
 # Environment variables
 .env
@@ -36,3 +36,4 @@ backend/static/uploads/items/*
 # Coverage reports
 .coverage
 htmlcov/
+

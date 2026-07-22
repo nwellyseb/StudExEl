@@ -30,3 +30,7 @@ coverage==7.10.7
 pytest-cov==7.1.0
 
 python-dotenv==1.2.1
+
+# Production server and PostgreSQL driver
+gunicorn==26.0.0
+psycopg[binary]==3.3.4

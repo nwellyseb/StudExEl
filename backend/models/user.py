@@ -5,7 +5,7 @@ Represents every student or administrator registered in StudExEl.
 Each user belongs to one school.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from werkzeug.security import (
     check_password_hash,
@@ -83,13 +83,13 @@ class User(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
     )
 
     updated_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
+        onupdate=lambda: datetime.now(UTC).replace(tzinfo=None),
     )
 
     school_id = db.Column(
