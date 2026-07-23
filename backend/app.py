@@ -5,6 +5,7 @@ from config import Config
 from extensions import csrf, db
 
 from routes.auth import auth
+from routes.health import health
 from routes.listings import listings
 from routes.marketplace import marketplace
 from routes.moderation import moderation
@@ -39,6 +40,7 @@ migrate = Migrate(
 
 # Register blueprints.
 app.register_blueprint(auth)
+app.register_blueprint(health)
 app.register_blueprint(marketplace)
 app.register_blueprint(listings)
 app.register_blueprint(messages)
