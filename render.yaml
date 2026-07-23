@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: studexel-web
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install -r requirements.txt
+    startCommand: flask --app backend/app.py db upgrade -d backend/migrations && gunicorn --chdir backend --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /health
+
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: studexel-db
+          property: connectionString
+
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+
+      - key: ITEM_IMAGE_STORAGE
+        value: cloudinary
+
+      - key: CLOUDINARY_URL
+        sync: false
+
+databases:
+  - name: studexel-db
+    plan: free
+    region: singapore
+    databaseName: studexel
+    user: studexel
