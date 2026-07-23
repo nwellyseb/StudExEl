@@ -17,10 +17,7 @@
                 {% if item.image %}
 
                     <img
-                        src="{{ url_for(
-                            'static',
-                            filename='uploads/items/' ~ item.image
-                        ) }}"
+                        src="{{ item_image_url(item.image) }}"
                         class="card-img-top"
                         alt="{{ item.title }}"
                         style="max-height: 500px; object-fit: cover;">

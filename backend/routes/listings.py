@@ -22,6 +22,7 @@ from models.user import User
 from utils.decorators import login_required
 from utils.uploads import (
     delete_item_image,
+    get_item_image_url,
     save_item_image,
 )
 
@@ -30,6 +31,16 @@ listings = Blueprint(
     "listings",
     __name__,
 )
+
+
+@listings.app_template_global(
+    "item_image_url"
+)
+def item_image_url_template(filename):
+
+    return get_item_image_url(
+        filename
+    )
 
 
 @listings.route(
