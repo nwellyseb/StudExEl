@@ -4,7 +4,7 @@ Item model.
 Represents a marketplace listing created by a student.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from extensions import db
 
@@ -58,13 +58,13 @@ class Item(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
     )
 
     updated_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
+        onupdate=lambda: datetime.now(UTC).replace(tzinfo=None),
     )
 
     seller_id = db.Column(

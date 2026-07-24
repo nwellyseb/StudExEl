@@ -26,6 +26,7 @@ from models import (
 )
 
 from routes.auth import auth
+from routes.health import health
 from routes.listings import listings
 from routes.marketplace import marketplace
 from routes.moderation import moderation
@@ -84,6 +85,10 @@ def app(tmp_path):
 
     test_app.register_blueprint(
         auth
+    )
+
+    test_app.register_blueprint(
+        health
     )
 
     test_app.register_blueprint(

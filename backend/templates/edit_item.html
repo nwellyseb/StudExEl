@@ -35,10 +35,7 @@ Edit {{ item.title }} | StudExEl
                             <div>
 
                                 <img
-                                    src="{{ url_for(
-                                        'static',
-                                        filename='uploads/items/' ~ item.image
-                                    ) }}"
+                                    src="{{ item_image_url(item.image) }}"
                                     alt="{{ item.title }}"
                                     class="img-fluid rounded border"
                                     style="max-height: 320px; object-fit: cover;">

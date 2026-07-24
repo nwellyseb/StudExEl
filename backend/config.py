@@ -62,6 +62,86 @@ DATABASE_PATH = os.path.join(
 )
 
 
+def get_database_url():
+
+    database_url = os.getenv(
+        "DATABASE_URL"
+    )
+
+    if not database_url:
+
+        return (
+            f"sqlite:///{DATABASE_PATH}"
+        )
+
+    if database_url.startswith(
+        "postgres://"
+    ):
+
+        return database_url.replace(
+            "postgres://",
+            "postgresql+psycopg://",
+            1,
+        )
+
+    if database_url.startswith(
+        "postgresql://"
+    ):
+
+        return database_url.replace(
+            "postgresql://",
+            "postgresql+psycopg://",
+            1,
+        )
+
+    return database_url
+
+
+def get_item_image_upload_folder():
+
+    return os.getenv(
+        "ITEM_IMAGE_UPLOAD_FOLDER"
+    ) or os.path.join(
+        BASE_DIR,
+        "static",
+        "uploads",
+        "items",
+    )
+
+
+
+def get_item_image_storage():
+
+    storage_backend = os.getenv(
+        "ITEM_IMAGE_STORAGE",
+        "local",
+    ).strip().lower()
+
+    supported_backends = {
+        "local",
+        "cloudinary",
+    }
+
+    if storage_backend not in supported_backends:
+
+        raise RuntimeError(
+            "ITEM_IMAGE_STORAGE must be "
+            "'local' or 'cloudinary'."
+        )
+
+    if (
+        storage_backend == "cloudinary"
+        and not os.getenv("CLOUDINARY_URL")
+    ):
+
+        raise RuntimeError(
+            "CLOUDINARY_URL is required when "
+            "ITEM_IMAGE_STORAGE=cloudinary."
+        )
+
+    return storage_backend
+
+
 class Config:
 
     SECRET_KEY = get_required_environment_variable(
@@ -69,16 +149,21 @@ class Config:
     )
 
     SQLALCHEMY_DATABASE_URI = (
-        f"sqlite:///{DATABASE_PATH}"
+        get_database_url()
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    ITEM_IMAGE_UPLOAD_FOLDER = os.path.join(
-        BASE_DIR,
-        "static",
-        "uploads",
-        "items",
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+    }
+
+    ITEM_IMAGE_STORAGE = (
+        get_item_image_storage()
+    )
+
+    ITEM_IMAGE_UPLOAD_FOLDER = (
+        get_item_image_upload_folder()
     )
 
     MAX_CONTENT_LENGTH = (

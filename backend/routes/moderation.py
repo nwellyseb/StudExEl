@@ -2,7 +2,7 @@
 Administrator moderation routes.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from flask import (
     Blueprint,
@@ -40,7 +40,7 @@ def mark_report_actioned(report):
 
     report.status = "Actioned"
     report.reviewed_by_id = session["user_id"]
-    report.reviewed_at = datetime.utcnow()
+    report.reviewed_at = datetime.now(UTC).replace(tzinfo=None)
 
 
 def get_report_target_user(report):
@@ -132,7 +132,7 @@ def update_report_status(report_id):
 
     report.status = new_status
     report.reviewed_by_id = session["user_id"]
-    report.reviewed_at = datetime.utcnow()
+    report.reviewed_at = datetime.now(UTC).replace(tzinfo=None)
 
     db.session.commit()
 

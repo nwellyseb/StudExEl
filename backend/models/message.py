@@ -4,7 +4,7 @@ Message model.
 Stores one private message sent inside a marketplace conversation.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from extensions import db
 
@@ -42,7 +42,7 @@ class Message(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
         nullable=False,
     )
 

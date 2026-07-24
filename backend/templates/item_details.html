@@ -1,7 +1,4 @@
-python3 - <<'PY'
-from pathlib import Path
-
-content = '''{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}
 {{ item.title }} | StudExEl
@@ -20,10 +17,7 @@ content = '''{% extends "base.html" %}
                 {% if item.image %}
 
                     <img
-                        src="{{ url_for(
-                            'static',
-                            filename='uploads/items/' ~ item.image
-                        ) }}"
+                        src="{{ item_image_url(item.image) }}"
                         class="card-img-top"
                         alt="{{ item.title }}"
                         style="max-height: 500px; object-fit: cover;">
@@ -253,10 +247,3 @@ content = '''{% extends "base.html" %}
 </div>
 
 {% endblock %}
-'''
-
-path = Path("backend/templates/item_details.html")
-path.write_text(content)
-
-print("item_details.html updated successfully.")
-PY

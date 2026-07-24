@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from flask import (
     Blueprint,
@@ -253,7 +253,7 @@ def conversation(conversation_id):
         )
 
         conversation_data.updated_at = (
-            datetime.utcnow()
+            datetime.now(UTC).replace(tzinfo=None)
         )
 
         db.session.add(

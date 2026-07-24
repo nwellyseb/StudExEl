@@ -4,7 +4,7 @@ Report model.
 Stores reports submitted against marketplace listings or users.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from extensions import db
 
@@ -64,14 +64,14 @@ class Report(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
         nullable=False,
     )
 
     updated_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
+        onupdate=lambda: datetime.now(UTC).replace(tzinfo=None),
         nullable=False,
     )
 
