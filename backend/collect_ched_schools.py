@@ -264,6 +264,7 @@ def collect_region(
 
     collected = []
     seen_records = set()
+    parsed_row_count = 0
 
     for page in range(
         1,
@@ -282,6 +283,8 @@ def collect_region(
         records = parse_ched_directory(
             page_html
         )
+
+        parsed_row_count += len(records)
 
         if not records:
             raise RuntimeError(
@@ -319,10 +322,20 @@ def collect_region(
             f"{len(records)} row(s)"
         )
 
-    if len(collected) != record_count:
+    if parsed_row_count != record_count:
         raise RuntimeError(
             f"Expected {record_count} directory rows "
-            f"but collected {len(collected)}."
+            f"but parsed {parsed_row_count}."
+        )
+
+    duplicate_count = (
+        parsed_row_count - len(collected)
+    )
+
+    if duplicate_count:
+        print(
+            f"  Removed {duplicate_count} "
+            "duplicate directory row(s)."
         )
 
     return collected
