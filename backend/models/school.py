@@ -16,7 +16,9 @@ class School(db.Model):
             "directory_source",
             "official_school_code",
             "school_name",
-            name="uq_schools_source_code_name",
+            "region",
+            "address",
+            name="uq_schools_directory_identity",
         ),
     )
 
@@ -43,7 +45,7 @@ class School(db.Model):
     )
 
     school_type = db.Column(
-        db.String(50)
+        db.String(100)
     )
 
     sector = db.Column(
@@ -60,6 +62,10 @@ class School(db.Model):
 
     city = db.Column(
         db.String(100)
+    )
+
+    address = db.Column(
+        db.String(255)
     )
 
     website = db.Column(

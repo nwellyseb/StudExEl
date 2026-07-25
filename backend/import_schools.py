@@ -17,6 +17,7 @@ SUPPORTED_FIELDS = (
     "region",
     "province",
     "city",
+    "address",
     "website",
 )
 
@@ -46,7 +47,9 @@ def find_existing_school(
     source,
     official_code,
     school_name,
+    region,
     city,
+    address,
     code_is_shared,
 ):
     if official_code:
@@ -54,6 +57,8 @@ def find_existing_school(
             directory_source=source,
             official_school_code=official_code,
             school_name=school_name,
+            region=region,
+            address=address,
         ).first()
 
         if exact_match:
@@ -68,10 +73,14 @@ def find_existing_school(
             if len(code_matches) == 1:
                 return code_matches[0]
 
+        return None
+
     return School.query.filter_by(
         directory_source=source,
         school_name=school_name,
+        region=region,
         city=city,
+        address=address,
     ).first()
 
 
@@ -151,15 +160,25 @@ def import_schools(
                 or row.get("school_id")
             )
 
+            region = clean(
+                row.get("region")
+            )
+
             city = clean(
                 row.get("city")
+            )
+
+            address = clean(
+                row.get("address")
             )
 
             school = find_existing_school(
                 source=source,
                 official_code=official_code,
                 school_name=school_name,
+                region=region,
                 city=city,
+                address=address,
                 code_is_shared=(
                     bool(official_code)
                     and code_counts[

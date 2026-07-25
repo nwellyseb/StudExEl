@@ -189,3 +189,128 @@ def test_import_schools_preserves_shared_codes(
         "Second Shared Code College",
         "Third Shared Code College",
     ]
+
+
+
+def test_import_schools_preserves_same_school_across_regions(
+    app,
+    tmp_path,
+):
+    csv_path = tmp_path / "regional-campuses.csv"
+
+    csv_path.write_text(
+        (
+            "school_name,official_school_code,"
+            "region,address,school_type,sector\n"
+            "Example University,CHED-500,"
+            "Region A,City A,"
+            "Private Sectarian Non-Stock,Private\n"
+            "Example University,CHED-500,"
+            "Region B,City B,"
+            "Private Non-Sectarian Stock,Private\n"
+            "Example University,CHED-500,"
+            "Region C,City C,"
+            "Public State University,Public\n"
+        ),
+        encoding="utf-8",
+    )
+
+    result = import_schools(
+        csv_path=csv_path,
+        default_source="CHED",
+    )
+
+    schools = db.session.execute(
+        db.select(School)
+        .where(
+            School.directory_source == "CHED",
+            School.official_school_code == "CHED-500",
+            School.school_name == "Example University",
+        )
+        .order_by(
+            School.region
+        )
+    ).scalars().all()
+
+    assert result == {
+        "added": 3,
+        "updated": 0,
+        "skipped": 0,
+    }
+
+    assert [
+        (
+            school.region,
+            school.address,
+            school.school_type,
+        )
+        for school in schools
+    ] == [
+        (
+            "Region A",
+            "City A",
+            "Private Sectarian Non-Stock",
+        ),
+        (
+            "Region B",
+            "City B",
+            "Private Non-Sectarian Stock",
+        ),
+        (
+            "Region C",
+            "City C",
+            "Public State University",
+        ),
+    ]
+
+
+
+def test_import_schools_preserves_different_codes_at_same_location(
+    app,
+    tmp_path,
+):
+    csv_path = tmp_path / "different-codes.csv"
+
+    csv_path.write_text(
+        (
+            "school_name,official_school_code,"
+            "region,address,school_type\n"
+            "MCN College,NEW,"
+            "Region II,Tuguegarao City,"
+            "Private Sectarian Stock\n"
+            "MCN College,NEW2026-2,"
+            "Region II,Tuguegarao City,"
+            "Private Non-Sectarian Non-Stock\n"
+        ),
+        encoding="utf-8",
+    )
+
+    result = import_schools(
+        csv_path=csv_path,
+        default_source="CHED",
+    )
+
+    schools = db.session.execute(
+        db.select(School)
+        .where(
+            School.directory_source == "CHED",
+            School.school_name == "MCN College",
+        )
+        .order_by(
+            School.official_school_code
+        )
+    ).scalars().all()
+
+    assert result == {
+        "added": 2,
+        "updated": 0,
+        "skipped": 0,
+    }
+
+    assert [
+        school.official_school_code
+        for school in schools
+    ] == [
+        "NEW",
+        "NEW2026-2",
+    ]
