@@ -66,7 +66,9 @@ Profile | StudExEl
                     <p>
                         <strong>Verification Status:</strong>
 
-                        {% if user.verification_status %}
+                        {% if user.is_admin %}
+                            Administrator, verification not required
+                        {% elif user.verification_status %}
                             {{ user.verification_status }}
                         {% else %}
                             Not verified
