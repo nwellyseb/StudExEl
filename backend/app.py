@@ -12,6 +12,7 @@ from routes.moderation import moderation
 from routes.messages import messages
 from routes.profile import profile
 from routes.reports import reports
+from routes.schools import schools
 
 # Import models so Flask-Migrate can detect them.
 from models import (
@@ -47,6 +48,7 @@ app.register_blueprint(messages)
 app.register_blueprint(moderation)
 app.register_blueprint(profile)
 app.register_blueprint(reports)
+app.register_blueprint(schools)
 
 
 @app.route("/")

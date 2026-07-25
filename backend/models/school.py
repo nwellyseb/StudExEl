@@ -25,6 +25,14 @@ class School(db.Model):
         db.String(50)
     )
 
+    official_school_code = db.Column(
+        db.String(50)
+    )
+
+    directory_source = db.Column(
+        db.String(20)
+    )
+
     school_type = db.Column(
         db.String(50)
     )

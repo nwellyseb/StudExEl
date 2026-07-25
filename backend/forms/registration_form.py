@@ -3,7 +3,7 @@ from wtforms import (
     StringField,
     PasswordField,
     SubmitField,
-    SelectField,
+    HiddenField,
     BooleanField
 )
 from wtforms.validators import (
@@ -48,9 +48,8 @@ class RegistrationForm(FlaskForm):
         ]
     )
 
-    school = SelectField(
+    school = HiddenField(
         "School",
-        coerce=int,
         validators=[DataRequired()]
     )
 

@@ -41,8 +41,45 @@
             </div>
 
             <div class="mb-3">
-                {{ form.school.label(class="form-label") }}
-                {{ form.school(class="form-select") }}
+                <label
+                    for="school-search"
+                    class="form-label"
+                >
+                    School
+                </label>
+
+                <input
+                    type="text"
+                    id="school-search"
+                    class="form-control"
+                    placeholder="Start typing your school name"
+                    autocomplete="off"
+                    aria-describedby="school-help"
+                    aria-controls="school-results"
+                    aria-autocomplete="list"
+                    required
+                >
+
+                {{ form.school(id="school-id") }}
+
+                <div
+                    id="school-help"
+                    class="form-text"
+                >
+                    Type at least two characters, then choose your school.
+                </div>
+
+                <div
+                    id="school-results"
+                    class="list-group mt-2"
+                    role="listbox"
+                ></div>
+
+                {% for error in form.school.errors %}
+                    <div class="text-danger mt-1">
+                        {{ error }}
+                    </div>
+                {% endfor %}
             </div>
 
             <div class="mb-3">
@@ -67,5 +104,141 @@
     </div>
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("school-search");
+    const schoolIdInput = document.getElementById("school-id");
+    const resultsContainer = document.getElementById("school-results");
+
+    let searchTimer = null;
+    let requestController = null;
+
+    function clearResults() {
+        resultsContainer.replaceChildren();
+    }
+
+    function clearSelection() {
+        schoolIdInput.value = "";
+        searchInput.setCustomValidity(
+            "Please choose a school from the search results."
+        );
+    }
+
+    function selectSchool(school) {
+        searchInput.value = school.name;
+        schoolIdInput.value = school.id;
+        searchInput.setCustomValidity("");
+        clearResults();
+    }
+
+    function showMessage(message) {
+        clearResults();
+
+        const item = document.createElement("div");
+        item.className = "list-group-item text-muted";
+        item.textContent = message;
+
+        resultsContainer.appendChild(item);
+    }
+
+    function showResults(schools) {
+        clearResults();
+
+        if (schools.length === 0) {
+            showMessage("No matching schools found.");
+            return;
+        }
+
+        schools.forEach((school) => {
+            const button = document.createElement("button");
+
+            button.type = "button";
+            button.className =
+                "list-group-item list-group-item-action";
+
+            const name = document.createElement("div");
+            name.className = "fw-semibold";
+            name.textContent = school.name;
+
+            const details = document.createElement("small");
+            details.className = "text-muted";
+
+            const location = [
+                school.city,
+                school.province,
+                school.region,
+            ].filter(Boolean).join(", ");
+
+            details.textContent = location || "Location unavailable";
+
+            button.append(name, details);
+
+            button.addEventListener("click", () => {
+                selectSchool(school);
+            });
+
+            resultsContainer.appendChild(button);
+        });
+    }
+
+    async function searchSchools(query) {
+        if (requestController) {
+            requestController.abort();
+        }
+
+        requestController = new AbortController();
+
+        try {
+            const response = await fetch(
+                `/api/schools/search?q=${encodeURIComponent(query)}`,
+                {
+                    signal: requestController.signal,
+                    headers: {
+                        "Accept": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("School search failed.");
+            }
+
+            const schools = await response.json();
+            showResults(schools);
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                showMessage(
+                    "School search is temporarily unavailable."
+                );
+            }
+        }
+    }
+
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value.trim();
+
+        clearTimeout(searchTimer);
+        clearSelection();
+        clearResults();
+
+        if (query.length < 2) {
+            return;
+        }
+
+        searchTimer = setTimeout(() => {
+            searchSchools(query);
+        }, 250);
+    });
+
+    searchInput.addEventListener("blur", () => {
+        setTimeout(clearResults, 150);
+    });
+
+    if (!schoolIdInput.value) {
+        clearSelection();
+    }
+});
+</script>
 
 {% endblock %}

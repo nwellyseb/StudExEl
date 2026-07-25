@@ -30,19 +30,41 @@ def register():
 
     form = RegistrationForm()
 
-    schools = School.query.order_by(
-        School.school_name
-    ).all()
-
-    form.school.choices = [
-        (
-            school.id,
-            school.school_name
-        )
-        for school in schools
-    ]
-
     if form.validate_on_submit():
+
+        try:
+            school_id = int(
+                form.school.data
+            )
+        except (TypeError, ValueError):
+            flash(
+                "Please select a valid school.",
+                "danger",
+            )
+
+            return render_template(
+                "register.html",
+                form=form,
+            )
+
+        selected_school = db.session.get(
+            School,
+            school_id,
+        )
+
+        if (
+            selected_school is None
+            or not selected_school.is_active
+        ):
+            flash(
+                "Please select a valid school.",
+                "danger",
+            )
+
+            return render_template(
+                "register.html",
+                form=form,
+            )
 
         existing_username = User.query.filter_by(
             username=form.username.data
@@ -81,7 +103,7 @@ def register():
             last_name=form.last_name.data,
             username=form.username.data,
             email=form.email.data,
-            school_id=form.school.data,
+            school_id=selected_school.id,
         )
 
         user.set_password(

@@ -33,6 +33,7 @@ from routes.moderation import moderation
 from routes.messages import messages
 from routes.profile import profile
 from routes.reports import reports
+from routes.schools import schools
 
 
 @pytest.fixture
@@ -108,6 +109,7 @@ def app(tmp_path):
     )
     test_app.register_blueprint(reports)
     test_app.register_blueprint(moderation)
+    test_app.register_blueprint(schools)
 
     @test_app.route("/")
     def home():
