@@ -5,7 +5,11 @@ services:
     plan: free
     region: singapore
     buildCommand: pip install -r requirements.txt
-    startCommand: flask --app backend/app.py db upgrade -d backend/migrations && gunicorn --chdir backend --bind 0.0.0.0:$PORT app:app
+    startCommand: >-
+      flask --app backend/app.py db upgrade -d backend/migrations &&
+      python backend/seed_categories.py &&
+      python backend/import_schools.py database/ched_schools.csv --source CHED &&
+      gunicorn --chdir backend --bind 0.0.0.0:$PORT app:app
     healthCheckPath: /health
 
     envVars:
