@@ -35,10 +35,11 @@ def upgrade():
         )
 
         batch_op.create_unique_constraint(
-            "uq_schools_source_official_code",
+            "uq_schools_source_code_name",
             [
                 "directory_source",
                 "official_school_code",
+                "school_name",
             ],
         )
 
@@ -48,7 +49,7 @@ def downgrade():
         "schools",
     ) as batch_op:
         batch_op.drop_constraint(
-            "uq_schools_source_official_code",
+            "uq_schools_source_code_name",
             type_="unique",
         )
 

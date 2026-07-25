@@ -11,6 +11,15 @@ from extensions import db
 class School(db.Model):
     __tablename__ = "schools"
 
+    __table_args__ = (
+        db.UniqueConstraint(
+            "directory_source",
+            "official_school_code",
+            "school_name",
+            name="uq_schools_source_code_name",
+        ),
+    )
+
     id = db.Column(
         db.Integer,
         primary_key=True

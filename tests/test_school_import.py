@@ -137,3 +137,55 @@ def test_import_schools_skips_missing_name(
     assert db.session.execute(
         db.select(School)
     ).scalars().all() == []
+
+
+def test_import_schools_preserves_shared_codes(
+    app,
+    tmp_path,
+):
+    csv_path = tmp_path / "shared-codes.csv"
+
+    csv_path.write_text(
+        (
+            "school_name,official_school_code,"
+            "region,city\n"
+            "First Shared Code College,"
+            "14049,CAR,Baguio City\n"
+            "Second Shared Code College,"
+            "14049,CAR,Baguio City\n"
+            "Third Shared Code College,"
+            "14049,CAR,Baguio City\n"
+        ),
+        encoding="utf-8",
+    )
+
+    result = import_schools(
+        csv_path=csv_path,
+        default_source="CHED",
+    )
+
+    schools = db.session.execute(
+        db.select(School)
+        .where(
+            School.directory_source == "CHED",
+            School.official_school_code == "14049",
+        )
+        .order_by(
+            School.school_name
+        )
+    ).scalars().all()
+
+    assert result == {
+        "added": 3,
+        "updated": 0,
+        "skipped": 0,
+    }
+
+    assert [
+        school.school_name
+        for school in schools
+    ] == [
+        "First Shared Code College",
+        "Second Shared Code College",
+        "Third Shared Code College",
+    ]

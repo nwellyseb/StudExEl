@@ -2,6 +2,7 @@
 
 import argparse
 import csv
+from collections import Counter
 from pathlib import Path
 
 from app import app
@@ -46,15 +47,26 @@ def find_existing_school(
     official_code,
     school_name,
     city,
+    code_is_shared,
 ):
     if official_code:
-        existing = School.query.filter_by(
+        exact_match = School.query.filter_by(
             directory_source=source,
             official_school_code=official_code,
+            school_name=school_name,
         ).first()
 
-        if existing:
-            return existing
+        if exact_match:
+            return exact_match
+
+        if not code_is_shared:
+            code_matches = School.query.filter_by(
+                directory_source=source,
+                official_school_code=official_code,
+            ).all()
+
+            if len(code_matches) == 1:
+                return code_matches[0]
 
     return School.query.filter_by(
         directory_source=source,
@@ -87,8 +99,32 @@ def import_schools(
                 "The CSV must contain a school_name column."
             )
 
+        rows = list(reader)
+        code_counts = Counter()
+
+        for row in rows:
+            source = (
+                clean(row.get("directory_source"))
+                or default_source
+            )
+
+            official_code = clean(
+                row.get("official_school_code")
+                or row.get("school_code")
+                or row.get("hei_code")
+                or row.get("school_id")
+            )
+
+            if official_code:
+                code_counts[
+                    (
+                        source,
+                        official_code,
+                    )
+                ] += 1
+
         for line_number, row in enumerate(
-            reader,
+            rows,
             start=2,
         ):
             school_name = clean(
@@ -124,6 +160,15 @@ def import_schools(
                 official_code=official_code,
                 school_name=school_name,
                 city=city,
+                code_is_shared=(
+                    bool(official_code)
+                    and code_counts[
+                        (
+                            source,
+                            official_code,
+                        )
+                    ] > 1
+                ),
             )
 
             is_new = school is None
