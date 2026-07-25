@@ -9,6 +9,7 @@ services:
       flask --app backend/app.py db upgrade -d backend/migrations &&
       python backend/seed_categories.py &&
       python backend/import_schools.py database/ched_schools.csv --source CHED &&
+      python backend/promote_admin.py &&
       gunicorn --chdir backend --bind 0.0.0.0:$PORT app:app
     healthCheckPath: /health
 
@@ -28,6 +29,9 @@ services:
         value: cloudinary
 
       - key: CLOUDINARY_URL
+        sync: false
+
+      - key: ADMIN_EMAIL
         sync: false
 
 databases:
