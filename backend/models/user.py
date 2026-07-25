@@ -45,6 +45,11 @@ class User(db.Model):
         nullable=False,
     )
 
+    email_verified_at = db.Column(
+        db.DateTime,
+        nullable=True,
+    )
+
     password_hash = db.Column(
         db.String(255),
         nullable=False,

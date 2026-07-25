@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from extensions import db
 
 from models.conversation import Conversation
@@ -343,6 +345,9 @@ def test_non_participant_cannot_access_conversation(
             last_name="Student",
             username="outsidestudent",
             email="outsidestudent@example.com",
+            email_verified_at=(
+                datetime.now(UTC).replace(tzinfo=None)
+            ),
             school_id=school.id,
         )
 

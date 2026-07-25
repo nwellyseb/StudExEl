@@ -1,4 +1,5 @@
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -74,6 +75,10 @@ def app(tmp_path):
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=False,
+        APP_BASE_URL="http://localhost",
+        EMAIL_FROM="StudExEl <test@example.com>",
+        EMAIL_VERIFICATION_MAX_AGE=24 * 60 * 60,
+        PASSWORD_RESET_MAX_AGE=60 * 60,
     )
 
     db.init_app(
@@ -194,6 +199,9 @@ def user(app, school):
         last_name="Student",
         username="teststudent",
         email="teststudent@example.com",
+        email_verified_at=(
+            datetime.now(UTC).replace(tzinfo=None)
+        ),
         school_id=school.id,
     )
 
@@ -243,6 +251,9 @@ def second_user(
         last_name="Student",
         username="anotherstudent",
         email="anotherstudent@example.com",
+        email_verified_at=(
+            datetime.now(UTC).replace(tzinfo=None)
+        ),
         school_id=school.id,
     )
 
