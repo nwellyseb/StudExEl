@@ -174,8 +174,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             button.append(name, details);
 
+            button.addEventListener(
+                "pointerdown",
+                (event) => {
+                    event.preventDefault();
+                    selectSchool(school);
+                }
+            );
+
             button.addEventListener("click", () => {
-                selectSchool(school);
+                if (
+                    schoolIdInput.value
+                    !== String(school.id)
+                ) {
+                    selectSchool(school);
+                }
             });
 
             resultsContainer.appendChild(button);

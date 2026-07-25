@@ -69,3 +69,38 @@ def test_school_search_excludes_inactive_schools(
 
     assert response.status_code == 200
     assert response.get_json() == []
+
+
+def test_school_search_matches_separated_words(
+    app,
+    client,
+):
+    school = School(
+        school_name="STI College Ortigas-Cainta",
+        official_school_code="04161",
+        directory_source="CHED",
+        school_type="Private",
+        sector="Private",
+        region="Region IV-A",
+        address="Cainta, Rizal",
+        is_active=True,
+    )
+
+    db.session.add(school)
+    db.session.commit()
+
+    response = client.get(
+        "/api/schools/search",
+        query_string={
+            "q": "STI Ortigas Cainta",
+        },
+    )
+
+    assert response.status_code == 200
+
+    results = response.get_json()
+
+    assert len(results) == 1
+    assert results[0]["name"] == (
+        "STI College Ortigas-Cainta"
+    )
