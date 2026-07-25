@@ -14,7 +14,33 @@
 
         <form method="POST">
 
-            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
+
+            {% if form.errors %}
+                <div
+                    class="alert alert-danger"
+                    role="alert"
+                >
+                    <strong>
+                        Please correct the following:
+                    </strong>
+
+                    <ul class="mb-0 mt-2">
+                        {% for field_name, errors in form.errors.items() %}
+                            {% set field = form[field_name] %}
+
+                            {% for error in errors %}
+                                <li>
+                                    <strong>
+                                        {{ field.label.text }}:
+                                    </strong>
+                                    {{ error }}
+                                </li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
 
             <div class="row">
 
@@ -110,9 +136,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("school-search");
     const schoolIdInput = document.getElementById("school-id");
     const resultsContainer = document.getElementById("school-results");
+    const registrationForm = searchInput.closest("form");
 
     let searchTimer = null;
     let requestController = null;
+    let selectedSchoolId = schoolIdInput.value;
+    let selectedSchoolName = searchInput.value;
 
     function clearResults() {
         resultsContainer.replaceChildren();
@@ -120,14 +149,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function clearSelection() {
         schoolIdInput.value = "";
+        selectedSchoolId = "";
+        selectedSchoolName = "";
+
         searchInput.setCustomValidity(
             "Please choose a school from the search results."
         );
     }
 
     function selectSchool(school) {
-        searchInput.value = school.name;
-        schoolIdInput.value = school.id;
+        selectedSchoolId = String(school.id);
+        selectedSchoolName = school.name;
+
+        searchInput.value = selectedSchoolName;
+        schoolIdInput.value = selectedSchoolId;
+
         searchInput.setCustomValidity("");
         clearResults();
     }
@@ -232,7 +268,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const query = searchInput.value.trim();
 
         clearTimeout(searchTimer);
-        clearSelection();
+
+        if (
+            searchInput.value !== selectedSchoolName
+        ) {
+            clearSelection();
+        }
+
         clearResults();
 
         if (query.length < 2) {
@@ -243,6 +285,29 @@ document.addEventListener("DOMContentLoaded", () => {
             searchSchools(query);
         }, 250);
     });
+
+    registrationForm.addEventListener(
+        "submit",
+        (event) => {
+            if (
+                selectedSchoolId
+                && searchInput.value === selectedSchoolName
+            ) {
+                schoolIdInput.value = selectedSchoolId;
+            }
+
+            if (!schoolIdInput.value) {
+                event.preventDefault();
+
+                searchInput.setCustomValidity(
+                    "Please choose a school from the search results."
+                );
+
+                searchInput.reportValidity();
+                searchInput.focus();
+            }
+        }
+    );
 
     searchInput.addEventListener("blur", () => {
         setTimeout(clearResults, 150);
