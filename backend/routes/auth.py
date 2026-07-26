@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 
 from flask import (
     Blueprint,
+    current_app,
     flash,
     redirect,
     render_template,
@@ -138,6 +139,12 @@ def register():
                 user
             )
         except Exception:
+            current_app.logger.exception(
+                "Failed to send registration verification email "
+                "for user_id=%s",
+                user.id,
+            )
+
             flash(
                 "Your account was created, but the "
                 "verification email could not be sent. "
