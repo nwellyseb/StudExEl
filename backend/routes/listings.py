@@ -175,6 +175,27 @@ def edit_item(item_id):
             )
         )
 
+    current_user = db.get_or_404(
+        User,
+        session["user_id"],
+    )
+
+    if (
+        not current_user.is_admin
+        and current_user.verification_status != "Verified"
+    ):
+        flash(
+            "Your student account must be verified "
+            "before you can edit listings.",
+            "warning",
+        )
+
+        return redirect(
+            url_for(
+                "listings.my_listings"
+            )
+        )
+
     form = EditItemForm()
 
     categories = Category.query.order_by(

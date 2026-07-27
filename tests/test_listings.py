@@ -278,3 +278,101 @@ def test_pending_student_cannot_access_sell_page(
         b"before you can post listings."
         in response.data
     )
+
+
+def test_pending_owner_cannot_edit_listing(
+    logged_in_client,
+    app,
+    user,
+    category,
+):
+    item_id = create_test_item(
+        app,
+        user,
+        category,
+    )
+
+    with app.app_context():
+        pending_user = db.session.get(
+            User,
+            user.id,
+        )
+
+        pending_user.verification_status = "Pending"
+        db.session.commit()
+
+    response = logged_in_client.post(
+        f"/edit/{item_id}",
+        data={
+            "title": "Pending User Change",
+            "description": (
+                "A pending student should not "
+                "be able to change this listing."
+            ),
+            "price": "999.00",
+            "condition": "Like New",
+            "category": str(category.id),
+            "status": "Available",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        b"Your student account must be verified "
+        b"before you can edit listings."
+        in response.data
+    )
+
+    with app.app_context():
+        item = db.session.get(
+            Item,
+            item_id,
+        )
+
+        assert item is not None
+        assert item.title == "Original Textbook"
+        assert item.price == 400.00
+
+
+def test_pending_owner_can_delete_listing(
+    logged_in_client,
+    app,
+    user,
+    category,
+):
+    item_id = create_test_item(
+        app,
+        user,
+        category,
+    )
+
+    with app.app_context():
+        pending_user = db.session.get(
+            User,
+            user.id,
+        )
+
+        pending_user.verification_status = "Pending"
+        db.session.commit()
+
+    response = logged_in_client.post(
+        f"/delete/{item_id}",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        b"Listing deleted successfully!"
+        in response.data
+    )
+
+    with app.app_context():
+        deleted_item = db.session.get(
+            Item,
+            item_id,
+        )
+
+        assert deleted_item is None
