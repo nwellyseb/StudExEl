@@ -202,6 +202,7 @@ def user(app, school):
         email_verified_at=(
             datetime.now(UTC).replace(tzinfo=None)
         ),
+        verification_status="Verified",
         school_id=school.id,
     )
 

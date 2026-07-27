@@ -1,5 +1,6 @@
 from extensions import db
 from models.item import Item
+from models.user import User
 
 
 def create_test_item(
@@ -250,3 +251,30 @@ def test_other_user_cannot_delete_listing(
 
         assert item is not None
         assert item.seller_id == user.id
+
+def test_pending_student_cannot_access_sell_page(
+    logged_in_client,
+    app,
+    user,
+):
+    with app.app_context():
+        pending_user = db.session.get(
+            User,
+            user.id,
+        )
+
+        pending_user.verification_status = "Pending"
+        db.session.commit()
+
+    response = logged_in_client.get(
+        "/sell",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        b"Your student account must be verified "
+        b"before you can post listings."
+        in response.data
+    )

@@ -50,6 +50,27 @@ def item_image_url_template(filename):
 @login_required
 def sell():
 
+    user = db.get_or_404(
+        User,
+        session["user_id"],
+    )
+
+    if (
+        not user.is_admin
+        and user.verification_status != "Verified"
+    ):
+        flash(
+            "Your student account must be verified "
+            "before you can post listings.",
+            "warning",
+        )
+
+        return redirect(
+            url_for(
+                "marketplace.marketplace_home"
+            )
+        )
+
     form = ItemForm()
 
     categories = Category.query.order_by(
@@ -65,11 +86,6 @@ def sell():
     ]
 
     if form.validate_on_submit():
-
-        user = db.get_or_404(
-            User,
-            session["user_id"],
-        )
 
         image_filename = save_item_image(
             form.image.data
