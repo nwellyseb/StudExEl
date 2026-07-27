@@ -76,6 +76,37 @@ class User(db.Model):
         default="Pending",
     )
 
+    verification_document_public_id = db.Column(
+        db.String(255),
+        nullable=True,
+    )
+
+    verification_document_format = db.Column(
+        db.String(20),
+        nullable=True,
+    )
+
+    verification_rejection_reason = db.Column(
+        db.String(500),
+        nullable=True,
+    )
+
+    verification_submitted_at = db.Column(
+        db.DateTime,
+        nullable=True,
+    )
+
+    verification_reviewed_at = db.Column(
+        db.DateTime,
+        nullable=True,
+    )
+
+    verification_reviewed_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=True,
+    )
+
     is_admin = db.Column(
         db.Boolean,
         default=False,

@@ -113,16 +113,44 @@ Dashboard | StudExEl
 
             </a>
 
+        {% elif (
+            user.verification_status == "Pending"
+            and user.verification_document_public_id
+        ) %}
+
+            <a
+                href="{{ url_for(
+                    'profile.submit_verification'
+                ) }}"
+                class="btn btn-outline-info">
+
+                Verification Under Review
+
+            </a>
+
+        {% elif user.verification_status == "Rejected" %}
+
+            <a
+                href="{{ url_for(
+                    'profile.submit_verification'
+                ) }}"
+                class="btn btn-outline-danger">
+
+                Resubmit Student Verification
+
+            </a>
+
         {% else %}
 
-            <button
-                type="button"
-                class="btn btn-outline-warning"
-                disabled>
+            <a
+                href="{{ url_for(
+                    'profile.submit_verification'
+                ) }}"
+                class="btn btn-outline-warning">
 
-                Student Verification Required
+                Submit Student Verification
 
-            </button>
+            </a>
 
         {% endif %}
 
@@ -153,6 +181,16 @@ Dashboard | StudExEl
                     class="btn btn-dark">
 
                     Moderation Reports
+
+                </a>
+
+                <a
+                    href="{{ url_for(
+                        'moderation.verification_list'
+                    ) }}"
+                    class="btn btn-outline-dark">
+
+                    Student Verifications
 
                 </a>
 

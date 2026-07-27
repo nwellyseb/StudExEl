@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}
+Student Verifications | StudExEl
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <div class="d-flex flex-wrap
+                justify-content-between
+                align-items-center
+                gap-3 mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                Student Verifications
+            </h2>
+
+            <p class="text-muted mb-0">
+                Review student identity and enrollment proof.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('profile.dashboard') }}"
+            class="btn btn-outline-secondary">
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+    <form
+        method="GET"
+        class="card card-body shadow-sm mb-4">
+
+        <div class="row g-2 align-items-end">
+
+            <div class="col-md-5">
+
+                <label
+                    for="status"
+                    class="form-label">
+
+                    Verification Status
+
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                    class="form-select">
+
+                    <option
+                        value="All"
+                        {% if selected_status == "All" %}
+                            selected
+                        {% endif %}>
+
+                        All
+
+                    </option>
+
+                    {% for status in statuses %}
+
+                        <option
+                            value="{{ status }}"
+                            {% if selected_status == status %}
+                                selected
+                            {% endif %}>
+
+                            {{ status }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="col-md-auto">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Filter
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            {% if verification_users %}
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-striped
+                               align-middle mb-0">
+
+                        <thead>
+
+                            <tr>
+                                <th>Student</th>
+                                <th>School</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th>Review</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for student in verification_users %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            {{ student.full_name }}
+                                        </strong>
+
+                                        <div class="small text-muted">
+                                            {{ student.email }}
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if student.school %}
+                                            {{ student.school.school_name }}
+                                        {% else %}
+                                            Not provided
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        <span class="badge
+                                            {% if student.verification_status == 'Verified' %}
+                                                text-bg-success
+                                            {% elif student.verification_status == 'Rejected' %}
+                                                text-bg-danger
+                                            {% else %}
+                                                text-bg-warning
+                                            {% endif %}">
+
+                                            {{ student.verification_status }}
+
+                                        </span>
+
+                                        {% if (
+                                            student.verification_status
+                                            == "Rejected"
+                                            and student.verification_rejection_reason
+                                        ) %}
+
+                                            <div class="small text-danger mt-2">
+                                                {{
+                                                    student.verification_rejection_reason
+                                                }}
+                                            </div>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if student.verification_submitted_at %}
+
+                                            {{
+                                                student.verification_submitted_at
+                                                .strftime("%Y-%m-%d %H:%M")
+                                            }}
+
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="d-flex
+                                                    flex-column
+                                                    gap-2">
+
+                                            {% if student.verification_document_public_id %}
+
+                                                <a
+                                                    href="{{ url_for(
+                                                        'moderation.view_verification_document',
+                                                        user_id=student.id
+                                                    ) }}"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="btn btn-sm
+                                                           btn-outline-primary">
+
+                                                    View Document
+
+                                                </a>
+
+                                            {% endif %}
+
+                                            {% if (
+                                                student.verification_status
+                                                == "Pending"
+                                                and student.verification_document_public_id
+                                            ) %}
+
+                                                <form
+                                                    method="POST"
+                                                    action="{{ url_for(
+                                                        'moderation.approve_verification',
+                                                        user_id=student.id
+                                                    ) }}">
+
+                                                    <input
+                                                        type="hidden"
+                                                        name="csrf_token"
+                                                        value="{{ csrf_token() }}">
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-sm
+                                                               btn-success w-100">
+
+                                                        Approve
+
+                                                    </button>
+
+                                                </form>
+
+                                                <form
+                                                    method="POST"
+                                                    action="{{ url_for(
+                                                        'moderation.reject_verification',
+                                                        user_id=student.id
+                                                    ) }}">
+
+                                                    <input
+                                                        type="hidden"
+                                                        name="csrf_token"
+                                                        value="{{ csrf_token() }}">
+
+                                                    <input
+                                                        type="text"
+                                                        name="reason"
+                                                        class="form-control
+                                                               form-control-sm
+                                                               mb-2"
+                                                        minlength="10"
+                                                        maxlength="500"
+                                                        required
+                                                        placeholder="Rejection reason">
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-sm
+                                                               btn-danger w-100">
+
+                                                        Reject
+
+                                                    </button>
+
+                                                </form>
+
+                                            {% elif student.verification_reviewed_at %}
+
+                                                <small class="text-muted">
+
+                                                    Reviewed
+                                                    {{
+                                                        student.verification_reviewed_at
+                                                        .strftime(
+                                                            "%Y-%m-%d %H:%M"
+                                                        )
+                                                    }}
+
+                                                </small>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <h5>
+                        No verification submissions found
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        There are no students matching this filter.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

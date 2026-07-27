@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}
+Student Verification | StudExEl
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <div class="card shadow p-4 mx-auto"
+         style="max-width: 720px;">
+
+        <h2 class="mb-3">
+            Student Verification
+        </h2>
+
+        <p class="text-muted">
+            Upload a clear image of your current student ID
+            or enrollment proof. Only administrators can
+            review the submitted document.
+        </p>
+
+        {% if user.verification_status == "Rejected" %}
+
+            <div class="alert alert-danger">
+
+                <strong>Previous submission rejected.</strong>
+
+                {% if user.verification_rejection_reason %}
+
+                    <div class="mt-2">
+                        {{ user.verification_rejection_reason }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% elif (
+            user.verification_status == "Pending"
+            and user.verification_document_public_id
+        ) %}
+
+            <div class="alert alert-info">
+                Your existing submission is awaiting review.
+                Uploading another image will replace it.
+            </div>
+
+        {% endif %}
+
+        <form
+            method="POST"
+            enctype="multipart/form-data">
+
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+
+                {{ form.document.label(
+                    class="form-label"
+                ) }}
+
+                {{ form.document(
+                    class="form-control",
+                    accept=".jpg,.jpeg,.png,.webp"
+                ) }}
+
+                {% for error in form.document.errors %}
+
+                    <div class="text-danger mt-1">
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+                <div class="form-text">
+                    Accepted formats: JPG, JPEG, PNG and WEBP.
+                    Maximum request size is 5 MB.
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                {{ form.submit(
+                    class="btn btn-primary"
+                ) }}
+
+                <a
+                    href="{{ url_for('profile.dashboard') }}"
+                    class="btn btn-outline-secondary">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
