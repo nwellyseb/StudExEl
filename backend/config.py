@@ -181,14 +181,19 @@ class Config:
         )
     )
 
-    RESEND_API_KEY = os.getenv(
-        "RESEND_API_KEY",
+    BREVO_API_KEY = os.getenv(
+        "BREVO_API_KEY",
         "",
     )
 
-    EMAIL_FROM = os.getenv(
-        "EMAIL_FROM",
+    BREVO_FROM_EMAIL = os.getenv(
+        "BREVO_FROM_EMAIL",
         "",
+    )
+
+    BREVO_FROM_NAME = os.getenv(
+        "BREVO_FROM_NAME",
+        "StudExEl",
     )
 
     APP_BASE_URL = os.getenv(

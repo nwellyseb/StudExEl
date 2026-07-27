@@ -76,7 +76,8 @@ def app(tmp_path):
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=False,
         APP_BASE_URL="http://localhost",
-        EMAIL_FROM="StudExEl <test@example.com>",
+        BREVO_FROM_EMAIL="test@example.com",
+        BREVO_FROM_NAME="StudExEl",
         EMAIL_VERIFICATION_MAX_AGE=24 * 60 * 60,
         PASSWORD_RESET_MAX_AGE=60 * 60,
     )

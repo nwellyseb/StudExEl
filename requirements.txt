@@ -39,4 +39,3 @@ psycopg[binary]==3.3.4
 cloudinary==1.45.0
 
 # Transactional email
-resend==2.34.0
