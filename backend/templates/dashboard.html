@@ -103,6 +103,8 @@ Dashboard | StudExEl
 
             </a>
 
+            {% if user.is_admin or user.verification_status == "Verified" %}
+
             <a
                 href="{{ url_for('listings.sell') }}"
                 class="btn btn-warning">
@@ -110,6 +112,19 @@ Dashboard | StudExEl
                 Sell an Item
 
             </a>
+
+        {% else %}
+
+            <button
+                type="button"
+                class="btn btn-outline-warning"
+                disabled>
+
+                Student Verification Required
+
+            </button>
+
+        {% endif %}
 
             <a
                 href="{{ url_for('listings.my_listings') }}"

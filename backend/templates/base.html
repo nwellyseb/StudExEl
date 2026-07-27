@@ -172,6 +172,8 @@
 
                     </a>
 
+                    {% if logged_in_user and (logged_in_user.is_admin or logged_in_user.verification_status == "Verified") %}
+
                     <a
                         href="{{ url_for(
                             'listings.sell'
@@ -181,6 +183,20 @@
                         Sell Item
 
                     </a>
+
+                {% else %}
+
+                    <a
+                        href="{{ url_for(
+                            'profile.dashboard'
+                        ) }}"
+                        class="btn btn-outline-warning fw-bold">
+
+                        Complete Verification
+
+                    </a>
+
+                {% endif %}
 
                     <a
                         href="{{ url_for(

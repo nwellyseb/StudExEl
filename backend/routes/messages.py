@@ -62,7 +62,7 @@ def get_unread_message_counts(user_id):
 
 
 @messages.app_context_processor
-def inject_unread_message_count():
+def inject_user_template_context():
 
     user_id = session.get(
         "user_id"
@@ -71,6 +71,19 @@ def inject_unread_message_count():
     if user_id is None:
 
         return {
+            "logged_in_user": None,
+            "unread_message_count": 0,
+        }
+
+    logged_in_user = db.session.get(
+        User,
+        user_id,
+    )
+
+    if logged_in_user is None:
+
+        return {
+            "logged_in_user": None,
             "unread_message_count": 0,
         }
 
@@ -79,6 +92,7 @@ def inject_unread_message_count():
     )
 
     return {
+        "logged_in_user": logged_in_user,
         "unread_message_count": sum(
             unread_counts.values()
         ),

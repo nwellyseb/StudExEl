@@ -36,11 +36,23 @@ Home | StudExEl
 
                 {% if session.get("user_id") %}
 
+                    {% if logged_in_user and (logged_in_user.is_admin or logged_in_user.verification_status == "Verified") %}
+
                     <a
                         href="{{ url_for('listings.sell') }}"
                         class="btn btn-warning btn-lg">
                         Sell an Item
                     </a>
+
+                {% else %}
+
+                    <a
+                        href="{{ url_for('profile.dashboard') }}"
+                        class="btn btn-outline-warning btn-lg">
+                        Complete Student Verification
+                    </a>
+
+                {% endif %}
 
                 {% else %}
 
