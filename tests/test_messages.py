@@ -446,3 +446,106 @@ def test_opening_conversation_marks_received_messages_read(
         )
 
         assert saved_message.is_read is True
+
+
+def test_pending_student_cannot_start_conversation(
+    client,
+    app,
+    user,
+    second_user,
+    category,
+):
+    item_id = create_message_test_item(
+        app,
+        seller=user,
+        category=category,
+    )
+
+    with app.app_context():
+        pending_user = db.session.get(
+            User,
+            second_user.id,
+        )
+
+        pending_user.verification_status = "Pending"
+        db.session.commit()
+
+    login_user(
+        client,
+        second_user.username,
+        "anotherpassword123",
+    )
+
+    response = client.post(
+        f"/messages/start/{item_id}",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        b"Your student account must be verified "
+        b"before you can send messages."
+        in response.data
+    )
+
+    with app.app_context():
+        assert Conversation.query.count() == 0
+
+
+def test_pending_participant_cannot_send_message(
+    client,
+    app,
+    user,
+    second_user,
+    category,
+):
+    item_id = create_message_test_item(
+        app,
+        seller=user,
+        category=category,
+    )
+
+    conversation_id = create_test_conversation(
+        app,
+        item_id=item_id,
+        buyer_id=second_user.id,
+        seller_id=user.id,
+    )
+
+    with app.app_context():
+        pending_user = db.session.get(
+            User,
+            second_user.id,
+        )
+
+        pending_user.verification_status = "Pending"
+        db.session.commit()
+
+    login_user(
+        client,
+        second_user.username,
+        "anotherpassword123",
+    )
+
+    response = client.post(
+        f"/messages/{conversation_id}",
+        data={
+            "body": "Can I buy this item?",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        b"Your student account must be verified "
+        b"before you can send messages."
+        in response.data
+    )
+
+    with app.app_context():
+        assert Message.query.filter_by(
+            conversation_id=conversation_id,
+            sender_id=second_user.id,
+        ).count() == 0

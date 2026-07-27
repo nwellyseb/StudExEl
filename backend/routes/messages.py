@@ -18,6 +18,7 @@ from forms.message_form import MessageForm
 from models.conversation import Conversation
 from models.item import Item
 from models.message import Message
+from models.user import User
 
 from utils.decorators import login_required
 
@@ -125,6 +126,28 @@ def start_conversation(item_id):
 
     user_id = session["user_id"]
 
+    current_user = db.get_or_404(
+        User,
+        user_id,
+    )
+
+    if (
+        not current_user.is_admin
+        and current_user.verification_status != "Verified"
+    ):
+        flash(
+            "Your student account must be verified "
+            "before you can send messages.",
+            "warning",
+        )
+
+        return redirect(
+            url_for(
+                "marketplace.item_details",
+                item_id=item.id,
+            )
+        )
+
     if item.seller_id == user_id:
 
         flash(
@@ -229,6 +252,28 @@ def conversation(conversation_id):
         db.session.commit()
 
     if form.validate_on_submit():
+
+        current_user = db.get_or_404(
+            User,
+            user_id,
+        )
+
+        if (
+            not current_user.is_admin
+            and current_user.verification_status != "Verified"
+        ):
+            flash(
+                "Your student account must be verified "
+                "before you can send messages.",
+                "warning",
+            )
+
+            return redirect(
+                url_for(
+                    "messages.conversation",
+                    conversation_id=conversation_data.id,
+                )
+            )
 
         body = form.body.data.strip()
 
